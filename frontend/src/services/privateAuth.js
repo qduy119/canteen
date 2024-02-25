@@ -1,0 +1,64 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { axiosBaseQuery } from "../api/axiosBaseQuery";
+import { baseUrl } from "../utils";
+
+const privateAuthApi = createApi({
+    reducerPath: "privateAuthApi",
+    baseQuery: axiosBaseQuery({
+        baseUrl,
+    }),
+    endpoints: (builder) => ({
+        getUserById: builder.query({
+            query: ({ id }) => ({
+                url: `/api/user/${id}`,
+            }),
+        }),
+        getAllUser: builder.query({
+            query: () => ({
+                url: "/api/user",
+            }),
+            keepUnusedDataFor: 5,
+        }),
+        addUser: builder.mutation({
+            query: (payload) => ({
+                url: "/register",
+                method: "POST",
+                body: payload,
+            }),
+        }),
+        modifyUser: builder.mutation({
+            query: (payload) => ({
+                url: `/api/user/${payload.id}`,
+                method: "PUT",
+                body: payload,
+            }),
+        }),
+        deleteUser: builder.mutation({
+            query: (payload) => ({
+                url: `/api/user/${payload.id}`,
+                method: "DELETE",
+            }),
+        }),
+        logout: builder.mutation({
+            query: () => ({
+                url: "/logout",
+                method: "POST",
+                options: {
+                    withCredentials: true,
+                },
+            }),
+        }),
+    }),
+});
+
+export const {
+    useLogoutMutation,
+    useLazyGetAllUserQuery,
+    useGetUserByIdQuery,
+    useLazyGetUserByIdQuery,
+    useGetAllUserQuery,
+    useAddUserMutation,
+    useModifyUserMutation,
+    useDeleteUserMutation,
+} = privateAuthApi;
+export default privateAuthApi;
