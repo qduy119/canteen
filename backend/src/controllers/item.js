@@ -21,11 +21,22 @@ module.exports = class ItemController {
                     where: {
                         ...condition,
                     },
+                    include: "category",
                     offset: (+page - 1) * +per_page,
                     limit: +per_page,
                 });
                 const total_pages = Math.ceil(count / +per_page);
                 return res.status(200).json({ data, total_pages });
+            } else if (keyword) {
+                const data = await Item.findAll({
+                    where: {
+                        name: {
+                            [Op.like]: `%${keyword}%`,
+                        },
+                    },
+                    include: "category",
+                });
+                return res.status(200).json({ data });
             }
             const data = await Item.findAll();
             res.status(200).json(data);

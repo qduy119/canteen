@@ -4,6 +4,10 @@ export const formatPrice = (price) => {
     return price.toFixed(2);
 };
 
+export const formatDate = (date) => {
+    return new Date(date).toLocaleString();
+};
+
 export const isAvailableSeat = (seats, seatNumber) => {
     const allSeats = seats?.reduce((result, item) => {
         result.push(item.seatNumber);
@@ -19,8 +23,51 @@ export const isSeatReturned = (seats, { orderId, seatNumber }) => {
     return !found;
 };
 
-export const formatDate = (date) => {
-    return new Date(date).toLocaleString();
+export const getProductByPagination = (products, page, per_page) => {
+    const offset = per_page * (page - 1);
+    const total_pages = Math.ceil(products.length / per_page);
+    const rows = products.slice(offset, per_page + offset);
+    return { rows, total_pages };
+};
+
+export const getCategoryFromProducts = (products) => {
+    return products.reduce((result, product) => {
+        const category = product.category;
+        if (!result.filter((item) => item.id === category.id).length) {
+            result.push(category);
+        }
+        return result;
+    }, []);
+};
+
+export const getProductByCondition = (products, condition) => {
+    const { categoryToFilter, priceRange, rating } = condition;
+    let finalResult = products;
+    if (categoryToFilter) {
+        finalResult = finalResult.reduce((result, product) => {
+            const categoryId = product.category.id;
+            if (categoryToFilter.includes(categoryId)) {
+                result.push(product);
+            }
+            return result;
+        }, []);
+    }
+    if (priceRange) {
+        finalResult = finalResult.filter(
+            (item) =>
+                priceRange.min <= item.price && item.price <= priceRange.max
+        );
+    }
+    if (rating) {
+        finalResult = finalResult.filter((item) => {
+            if (rating >= 5) {
+                return item.rating === 5;
+            } else {
+                return item.rating >= rating;
+            }
+        });
+    }
+    return finalResult;
 };
 
 export const formatDateOfBirth = (dateString) => {

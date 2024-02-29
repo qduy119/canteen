@@ -2,21 +2,43 @@
 
 ## I. Set up
 
-To run this project, install it locally using npm:
+### 1. Install local module using npm
 
-- Frontend:
-
-```
-$ cd frontend
-$ npm install
-$ npm run dev
-```
-- Backend:
-
+-   Backend
 ```
 $ cd backend
 $ npm install
+```
+
+-   Frontend
+```
+$ cd frontend
+$ npm install
+```
+
+### 2. Migrations and seeds
+
+-   Create database `canteen` in MySQL Workbench:
+-   Then run this command:
+
+```
+$ cd backend/src
+$ npx sequelize-cli db:migrate
+$ npx sequelize-cli db:seed:all
+```
+
+### 3. Run this project:
+
+-   Backend
+```
+$ cd backend
 $ npm start
+```
+
+-   Frontend
+```
+$ cd frontend
+$ npm run dev
 ```
 
 ## II. VNPAY card information for testing (currently available for NCB Bank only)
