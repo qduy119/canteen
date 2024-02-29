@@ -5,12 +5,14 @@
 ### 1. Install local module using npm
 
 -   Backend
+
 ```
 $ cd backend
 $ npm install
 ```
 
 -   Frontend
+
 ```
 $ cd frontend
 $ npm install
@@ -27,15 +29,24 @@ $ npx sequelize-cli db:migrate
 $ npx sequelize-cli db:seed:all
 ```
 
+-   Account for administration:
+
+```
+email: admin@admin.com
+password: admin
+```
+
 ### 3. Run this project:
 
 -   Backend
+
 ```
 $ cd backend
 $ npm start
 ```
 
 -   Frontend
+
 ```
 $ cd frontend
 $ npm run dev
