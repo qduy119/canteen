@@ -24,6 +24,7 @@ import seatApi from "../services/seat";
 import paymentApi from "../services/payment";
 import orderApi from "../services/order";
 import orderItemApi from "../services/orderitem";
+import couponApi from "../services/coupon";
 
 import { injectStore } from "../api/axios";
 
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
     [paymentApi.reducerPath]: paymentApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [orderItemApi.reducerPath]: orderItemApi.reducer,
+    [couponApi.reducerPath]: couponApi.reducer,
 });
 
 const persistConfig = {
@@ -75,7 +77,8 @@ export const store = configureStore({
             seatApi.middleware,
             paymentApi.middleware,
             orderApi.middleware,
-            orderItemApi.middleware
+            orderItemApi.middleware,
+            couponApi.middleware
         ),
 });
 

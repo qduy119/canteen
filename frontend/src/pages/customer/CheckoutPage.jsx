@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAddOrderMutation } from "../../services/order";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import SeatReservationDialog from "../../components/Dialog/SeatReservationDialog";
 import { formatPrice } from "../../utils";
 import {
@@ -15,10 +17,13 @@ import {
     useLazyGetAllSeatReservationQuery,
 } from "../../services/seat";
 import { useCreatePaymentUrlMutation } from "../../services/payment";
+import { useLazyGetAllCouponQuery } from "../../services/coupon";
 import getItemsInCart from "../../features/cart/getItemsInCart";
 import CustomCheckoutDialog from "../../components/Dialog/CustomCheckoutDialog";
+import CouponSelectionDialog from "../../components/Dialog/CouponSelectionDialog";
 import { toast } from "react-toastify";
 import Toast from "../../components/Toast/Toast";
+import CheckoutItem from "../../components/Checkout/CheckoutItem";
 
 export default function CheckoutPage() {
     const navigate = useNavigate();
@@ -27,7 +32,8 @@ export default function CheckoutPage() {
     const user = useSelector((state) => state.auth.user);
     const cartItems = useSelector((state) => state.cart.items);
     const items = location.state?.items;
-    const [getAllSeat, { data }] = useLazyGetAllSeatReservationQuery();
+    const [getAllSeat, { data: seats }] = useLazyGetAllSeatReservationQuery();
+    const [getAllCoupon, { data: coupons }] = useLazyGetAllCouponQuery();
     const [addOrder, { data: order, isSuccess: addOrderSuccess }] =
         useAddOrderMutation();
     const [deleteCartItem, { isSuccess: deleteCartItemSuccess }] =
@@ -41,11 +47,13 @@ export default function CheckoutPage() {
         { data: paymentUrl, isSuccess: createPaymentUrlSuccess },
     ] = useCreatePaymentUrlMutation();
     const [open, setOpen] = useState(false);
+    const [couponOpen, setCouponOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [seatNumber, setSeatNumber] = useState(null);
+    const [coupon, setCoupon] = useState(null);
 
-    const getTotalPrice = useCallback(() => {
-        return items.reduce((total, item) => {
+    const getPrice = () =>
+        items.reduce((total, item) => {
             total += Number(
                 formatPrice(
                     item.quantity *
@@ -55,7 +63,17 @@ export default function CheckoutPage() {
             );
             return total;
         }, 0);
-    }, [items]);
+    const getDiscount = () =>
+        coupon ? 0.01 * coupon.discountPercentage * getPrice() : 0;
+    const getTotalPrice = () => getPrice() - getDiscount();
+
+    function handleCouponOpen() {
+        getAllCoupon();
+        setCouponOpen(true);
+    }
+    function handleCouponClose() {
+        setCouponOpen(false);
+    }
     function handleDialogOpen() {
         getAllSeat();
         setOpen(true);
@@ -66,6 +84,9 @@ export default function CheckoutPage() {
     function handleSeatNumber(number) {
         setSeatNumber(number);
     }
+    function handleCoupon(code) {
+        setCoupon(code);
+    }
     function handleCheckout() {
         const payload = {
             orderDate: new Date(),
@@ -73,6 +94,11 @@ export default function CheckoutPage() {
             seatNumber,
             userId: user.id,
         };
+        if (coupon) {
+            payload.couponCode = coupon.code;
+            payload.couponTitle = coupon.title;
+            payload.discountPercentage = coupon.discountPercentage;
+        }
         addOrder(payload);
         items.forEach((item) => {
             const found = cartItems.find((cartItem) => cartItem.id == item.id);
@@ -152,7 +178,7 @@ export default function CheckoutPage() {
                         Current Cart
                     </p>
                     <div className="p-5 overflow-x-scroll">
-                        <table className="min-w-full text-center table-auto">
+                        <table className="min-w-full text-center table-auto bg-white rounded-md">
                             <thead className="font-medium border-b border-primary">
                                 <tr>
                                     <th scope="col" className="px-6 py-4">
@@ -174,46 +200,76 @@ export default function CheckoutPage() {
                             </thead>
                             <tbody>
                                 {items.map((item, index) => (
-                                    <tr key={index}>
-                                        <td className="whitespace-nowrap px-6 py-4">
-                                            {index + 1}
-                                        </td>
-                                        <td className="whitespace-nowrap px-6 py-4 flex justify-center">
-                                            <div
-                                                className="w-[50px] h-[50px] bg-center bg-cover rounded-md"
-                                                style={{
-                                                    backgroundImage: `url(${item.item.thumbnail})`,
-                                                }}
-                                            />
-                                        </td>
-                                        <td className="whitespace-nowrap px-6 py-4">
-                                            {item.item.name}
-                                        </td>
-                                        <td className="whitespace-nowrap px-6 py-4">
-                                            {item.quantity}
-                                        </td>
-                                        <td className="whitespace-nowrap px-6 py-4">
-                                            {formatPrice(
-                                                item.item.price *
-                                                    item.quantity *
-                                                    (1 -
-                                                        item.item.discount *
-                                                            0.01)
-                                            )}{" "}
-                                            $
-                                        </td>
-                                    </tr>
+                                    <CheckoutItem
+                                        key={index}
+                                        i={index}
+                                        item={item}
+                                    />
                                 ))}
                             </tbody>
                         </table>
                     </div>
                     <div className="px-5">
-                        <p className="text-xl font-medium mt-4 text-primary-light">
-                            TOTAL PRICE:{" "}
-                            <span className="font-bold text-primary">
-                                {formatPrice(getTotalPrice())}$
-                            </span>
-                        </p>
+                        <div className="float-right">
+                            <table className="border-spacing-2 border-separate">
+                                <tbody className="text-lg">
+                                    <tr>
+                                        <td>
+                                            <p className="font-medium text-primary-light">
+                                                PRICE
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <span className="font-bold text-primary">
+                                                {formatPrice(getPrice())}$
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p className="font-medium text-primary-light">
+                                                DISCOUNT
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <span className="font-bold text-primary">
+                                                {formatPrice(getDiscount())}$
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p className="font-medium text-primary-light">
+                                                TOTAL
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <span className="font-bold text-primary">
+                                                {formatPrice(getTotalPrice())}$
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {/* <p className="text-xl font-medium mt-4 text-primary-light">
+                                PRICE:{" "}
+                                <span className="font-bold text-primary">
+                                    {formatPrice(getPrice())}$
+                                </span>
+                            </p>
+                            <p className="text-xl font-medium mt-2 text-primary-light">
+                                DISCOUNT:{" "}
+                                <span className="font-bold text-primary">
+                                    {formatPrice(getDiscount())}$
+                                </span>
+                            </p>
+                            <p className="text-xl font-medium mt-2 text-primary-light">
+                                TOTAL:{" "}
+                                <span className="font-bold text-primary">
+                                    {formatPrice(getTotalPrice())}$
+                                </span>
+                            </p> */}
+                        </div>
                         <button
                             type="button"
                             onClick={() => handleDialogOpen()}
@@ -227,12 +283,34 @@ export default function CheckoutPage() {
                                 {seatNumber ?? "None"}
                             </span>
                         </p>
+                        <div
+                            onClick={() => handleCouponOpen()}
+                            className="mt-4 p-2 border-primary border-[1px] rounded-md w-fit text-primary cursor-pointer"
+                        >
+                            {coupon ? (
+                                <p>
+                                    <LocalOfferIcon className="mr-1" />
+                                    {coupon.title} {coupon.discountPercentage}%
+                                    OFF
+                                </p>
+                            ) : (
+                                <p>
+                                    Coupon
+                                    <ChevronRightIcon />
+                                </p>
+                            )}
+                        </div>
                         <SeatReservationDialog
                             open={open}
-                            data={data}
-                            currentSeat={seatNumber}
+                            seats={seats}
                             onSetSeatNumber={handleSeatNumber}
                             onSetClose={handleDialogClose}
+                        />
+                        <CouponSelectionDialog
+                            open={couponOpen}
+                            onSetClose={handleCouponClose}
+                            onSetCoupon={handleCoupon}
+                            coupons={coupons}
                         />
                     </div>
                 </div>

@@ -163,6 +163,31 @@ export default function OrderPage() {
             },
         },
         {
+            field: "couponCode",
+            headerName: "Coupon Code",
+            width: 150,
+            sortable: false,
+        },
+        {
+            field: "couponTitle",
+            headerName: "Coupon Title",
+            width: 200,
+            sortable: false,
+        },
+        {
+            field: "discountPercentage",
+            headerName: "Discount",
+            headerAlign: "center",
+            align: "center",
+            width: 100,
+            sortable: false,
+            renderCell: (rowData) => (
+                <p>
+                    {rowData.row.discountPercentage && `${rowData.row.discountPercentage}%`}
+                </p>
+            ),
+        },
+        {
             field: "total",
             headerName: "Amount",
             headerAlign: "center",

@@ -32,7 +32,7 @@ import {
 } from "../../services/item";
 import { useLazyGetAllUserQuery } from "../../services/privateAuth";
 import { useLazyGetAllOrderQuery } from "../../services/order";
-import { getTotalOrder } from "../../utils";
+import { getTotalOrder, getTotalSales } from "../../utils";
 
 const avatarSX = {
     width: 36,
@@ -55,16 +55,9 @@ export default function DashboardPage() {
     const [getAllUsers, { data: users }] = useLazyGetAllUserQuery();
     const { data: topSales } = useGetTopSalesQuery();
     const [getAllOrders, { data: orders }] = useLazyGetAllOrderQuery();
-    const totalSales = orders
-        ?.reduce((sum, order) => {
-            if (order.status === "Success") {
-                sum += order.total;
-            }
-            return sum;
-        }, 0)
-        .toFixed(2);
     const [slot, setSlot] = useState("day");
     const order = getTotalOrder(orders, { slot });
+    const totalSales = getTotalSales(orders);
 
     useEffect(() => {
         getAllProducts();
@@ -96,19 +89,19 @@ export default function DashboardPage() {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <AnalyticEcommerce
                             title="Total Users"
-                            count={users?.length}
+                            count={users?.length ?? 0}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <AnalyticEcommerce
                             title="Total Order"
-                            count={orders?.length}
+                            count={orders?.length ?? 0}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <AnalyticEcommerce
                             title="Total Sales"
-                            count={`$${totalSales}`}
+                            count={`$${totalSales ?? 0}`}
                         />
                     </Grid>
                     <Grid

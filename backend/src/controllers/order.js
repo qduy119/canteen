@@ -1,4 +1,5 @@
-const { Order, OrderItem, Item } = require("../models");
+const { Op } = require("sequelize");
+const { Order, OrderItem, Item, Coupon, sequelize } = require("../models");
 
 module.exports = class OrderController {
     static async getAll(req, res) {
@@ -50,9 +51,25 @@ module.exports = class OrderController {
     static async create(req, res) {
         try {
             const payload = req.body;
+            const { couponCode } = payload;
+            if (couponCode) {
+                await Coupon.increment(
+                    { usedQuantity: 1 },
+                    {
+                        where: {
+                            code: couponCode,
+                            expirationDate: { [Op.gt]: new Date() },
+                            usedQuantity: {
+                                [Op.lt]: sequelize.col("usageLimit"),
+                            },
+                        },
+                    }
+                );
+            }
             const data = await Order.create(payload);
             res.status(200).json(data);
         } catch (error) {
+            console.log(error);
             res.status(500).json({ error });
         }
     }

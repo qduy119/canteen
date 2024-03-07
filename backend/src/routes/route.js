@@ -8,6 +8,7 @@ const OrderController = require("../controllers/order");
 const OrderItemController = require("../controllers/orderItem");
 const ReviewController = require("../controllers/review");
 const UserController = require("../controllers/user");
+const CouponController = require("../controllers/coupon");
 const { protect, restrictTo } = require("../middleware/auth");
 const router = express.Router();
 
@@ -98,6 +99,18 @@ router
 
 // review
 router.route("/review").post(restrictTo("Customer"), ReviewController.create);
+
+// coupon
+router
+    .route("/coupon")
+    .get(restrictTo("Customer", "Admin"), CouponController.getAll)
+    .post(restrictTo("Admin"), CouponController.create);
+
+router
+    .route("/coupon/:id")
+    .get(restrictTo("Customer", "Admin"), CouponController.getById)
+    .put(restrictTo("Admin"), CouponController.update)
+    .delete(restrictTo("Admin"), CouponController.delete);
 
 // for payment
 router

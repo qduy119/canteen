@@ -97,7 +97,7 @@ Ngày phát hành:07/15
 
 ### 6
 
-Loại thẻ quốc tếVISA (No 3DS)
+Loại thẻ quốc tế VISA (No 3DS)
 Số thẻ: 4456530000001005
 CVC/CVV: 123
 Tên chủ thẻ:NGUYEN VAN A

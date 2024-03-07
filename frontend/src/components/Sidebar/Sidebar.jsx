@@ -2,8 +2,10 @@ import { Link, NavLink } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import LabelIcon from "@mui/icons-material/Label";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
-import EventNoteIcon from "@mui/icons-material/EventNote";
+import DiscountIcon from "@mui/icons-material/Discount";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import PeopleIcon from "@mui/icons-material/People";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import { canteen } from "../../assets";
 
@@ -11,7 +13,9 @@ const navigationLinks = [
     { to: "dashboard", label: "Dashboard", icon: <HomeIcon /> },
     { to: "category", label: "Category", icon: <LabelIcon /> },
     { to: "menu", label: "Menu", icon: <FastfoodIcon /> },
-    { to: "order", label: "Order", icon: <EventNoteIcon /> },
+    { to: "coupon", label: "Coupon", icon: <DiscountIcon /> },
+    { to: "order", label: "Order", icon: <ReceiptIcon /> },
+    { to: "transaction", label: "Transaction", icon: <CreditCardIcon /> },
     { to: "customer", label: "Customer", icon: <PeopleIcon /> },
     { to: "revenue", label: "Revenue", icon: <BarChartIcon /> },
 ];

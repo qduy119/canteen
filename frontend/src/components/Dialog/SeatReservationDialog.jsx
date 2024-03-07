@@ -7,6 +7,7 @@ import {
     Box,
     Typography,
 } from "@mui/material";
+import { useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
@@ -15,13 +16,24 @@ import { isAvailableSeat } from "../../utils";
 
 export default function SeatReservationDialog({
     open,
-    data,
-    currentSeat,
+    seats,
     onSetClose,
     onSetSeatNumber,
 }) {
+    const [selected, setSelected] = useState(null);
+
+    function handleAddSeat() {
+        onSetSeatNumber(selected);
+        onSetClose();
+    }
+
     return (
-        <Dialog open={open} onClose={onSetClose} disableScrollLock={true} scroll="paper">
+        <Dialog
+            open={open}
+            onClose={onSetClose}
+            disableScrollLock={true}
+            scroll="paper"
+        >
             <DialogTitle sx={{ m: 0, p: 2, fontWeight: "medium" }}>
                 Select an available seat
             </DialogTitle>
@@ -44,7 +56,7 @@ export default function SeatReservationDialog({
                             <Box key={seatNumber}>
                                 <Tooltip
                                     title={
-                                        isAvailableSeat(data, seatNumber)
+                                        isAvailableSeat(seats, seatNumber)
                                             ? ""
                                             : "Seat not available"
                                     }
@@ -52,18 +64,18 @@ export default function SeatReservationDialog({
                                     <span>
                                         <IconButton
                                             onClick={() =>
-                                                onSetSeatNumber(seatNumber)
+                                                setSelected(seatNumber)
                                             }
                                             disabled={
                                                 !isAvailableSeat(
-                                                    data,
+                                                    seats,
                                                     seatNumber
                                                 )
                                             }
                                         >
                                             <TableRestaurantIcon
                                                 className={
-                                                    currentSeat === seatNumber
+                                                    selected === seatNumber
                                                         ? "text-primary"
                                                         : ""
                                                 }
@@ -80,13 +92,13 @@ export default function SeatReservationDialog({
                 </div>
                 <Typography className="mt-5 font-medium text-primary">
                     Your seat:{" "}
-                    <span className="font-bold">{currentSeat ?? "None"}</span>
+                    <span className="font-bold">{selected ?? "None"}</span>
                 </Typography>
             </DialogContent>
             <DialogActions>
                 <Button
                     autoFocus
-                    onClick={onSetClose}
+                    onClick={handleAddSeat}
                     className="bg-primary-light hover:bg-primary-dark transition-all text-white font-medium"
                 >
                     Save

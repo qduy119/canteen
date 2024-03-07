@@ -17,6 +17,9 @@ module.exports = {
                 },
             },
             orderDate: Sequelize.DATE,
+            couponCode: Sequelize.TEXT,
+            couponTitle: Sequelize.TEXT,
+            discountPercentage: Sequelize.FLOAT,
             total: Sequelize.FLOAT,
             seatNumber: Sequelize.INTEGER,
             status: {

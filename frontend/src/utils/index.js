@@ -97,6 +97,17 @@ function endOfWeek(date) {
     return new Date(date.setDate(lastday));
 }
 
+export const getTotalSales = (orders) => {
+    return orders
+        ?.reduce((sum, order) => {
+            if (order.status === "Success") {
+                sum += order.total;
+            }
+            return sum;
+        }, 0)
+        .toFixed(2);
+};
+
 export const getTotalOrder = (orders, { slot }) => {
     const hash =
         slot === "day"

@@ -41,6 +41,9 @@ module.exports = (sequelize, DataTypes) => {
                 },
             },
             orderDate: DataTypes.DATE,
+            couponCode: DataTypes.TEXT,
+            couponTitle: DataTypes.TEXT,
+            discountPercentage: DataTypes.FLOAT,
             total: DataTypes.FLOAT,
             seatNumber: DataTypes.INTEGER,
             status: {

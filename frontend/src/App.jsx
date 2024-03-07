@@ -24,6 +24,8 @@ import AdminCategoryPage from "./pages/admin/CategoryPage";
 import MenuPage from "./pages/admin/MenuPage";
 import AdminOrderPage from "./pages/admin/OrderPage";
 import CustomerPage from "./pages/admin/CustomerPage";
+import CouponPage from "./pages/admin/CouponPage";
+import TransactionPage from "./pages/admin/TransactionPage";
 import RevenuePage from "./pages/admin/RevenuePage";
 import OAuthSuccessPage from "./pages/customer/OAuthSuccessPage";
 import PaymentPage from "./pages/customer/PaymentPage";
@@ -125,8 +127,16 @@ const router = createBrowserRouter([
                         element: <MenuPage />,
                     },
                     {
+                        path: "coupon",
+                        element: <CouponPage />,
+                    },
+                    {
                         path: "order",
                         element: <AdminOrderPage />,
+                    },
+                    {
+                        path: "transaction",
+                        element: <TransactionPage />,
                     },
                     {
                         path: "customer",

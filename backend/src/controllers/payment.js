@@ -1,7 +1,6 @@
 const moment = require("moment");
 const querystring = require("qs");
 const crypto = require("crypto");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { Payment } = require("../models");
 
 function sortObject(obj) {
@@ -29,9 +28,13 @@ module.exports = class ItemController {
             const { userId } = req.query;
             let data;
             if (userId) {
-                data = await Payment.findAll({ where: { userId } });
+                data = await Payment.findAll({
+                    where: { userId },
+                });
             } else {
-                data = await Payment.findAll();
+                data = await Payment.findAll({
+                    include: "user",
+                });
             }
             res.status(200).json(data);
         } catch (error) {
@@ -57,38 +60,38 @@ module.exports = class ItemController {
             res.status(500).json({ error });
         }
     }
-    static async createCheckoutSession(req, res) {
-        try {
-            const { items, paymentId, orderId } = req.body;
-            const lineItems = items.map((item) => ({
-                price_data: {
-                    currency: "usd",
-                    product_data: {
-                        name: item.item.name,
-                        images: [item.item.thumbnail],
-                    },
-                    unit_amount:
-                        Number(
-                            item.item.price *
-                                (1 - item.item.discount * 0.01).toFixed(2)
-                        ) * 100,
-                },
-                quantity: item.quantity,
-            }));
-            const session = await stripe.checkout.sessions.create({
-                line_items: lineItems,
-                payment_method_types: ["card"],
-                mode: "payment",
-                success_url: `${process.env.CLIENT_DOMAIN}/payment-success?paymentId=${paymentId}&orderId=${orderId}`,
-                cancel_url: `${process.env.CLIENT_DOMAIN}/payment-cancel?paymentId=${paymentId}&orderId=${orderId}`,
-            });
+    // static async createCheckoutSession(req, res) {
+    //     try {
+    //         const { items, paymentId, orderId } = req.body;
+    //         const lineItems = items.map((item) => ({
+    //             price_data: {
+    //                 currency: "usd",
+    //                 product_data: {
+    //                     name: item.item.name,
+    //                     images: [item.item.thumbnail],
+    //                 },
+    //                 unit_amount:
+    //                     Number(
+    //                         item.item.price *
+    //                             (1 - item.item.discount * 0.01).toFixed(2)
+    //                     ) * 100,
+    //             },
+    //             quantity: item.quantity,
+    //         }));
+    //         const session = await stripe.checkout.sessions.create({
+    //             line_items: lineItems,
+    //             payment_method_types: ["card"],
+    //             mode: "payment",
+    //             success_url: `${process.env.CLIENT_DOMAIN}/payment-success?paymentId=${paymentId}&orderId=${orderId}`,
+    //             cancel_url: `${process.env.CLIENT_DOMAIN}/payment-cancel?paymentId=${paymentId}&orderId=${orderId}`,
+    //         });
 
-            res.status(200).json({ sessionUrl: session.url });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error });
-        }
-    }
+    //         res.status(200).json({ sessionUrl: session.url });
+    //     } catch (error) {
+    //         console.log(error);
+    //         res.status(500).json({ error });
+    //     }
+    // }
     static async createPaymentUrl(req, res) {
         try {
             const { orderId, amount, bankCode } = req.body;
