@@ -21,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             code: {
                 type: DataTypes.TEXT,
-                unique: true,
             },
             title: DataTypes.TEXT,
             discountPercentage: {

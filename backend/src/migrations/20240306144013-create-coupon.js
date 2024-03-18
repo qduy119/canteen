@@ -11,7 +11,6 @@ module.exports = {
             },
             code: {
                 type: Sequelize.TEXT,
-                unique: true,
             },
             title: Sequelize.TEXT,
             discountPercentage: {
