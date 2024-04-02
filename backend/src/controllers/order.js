@@ -93,6 +93,12 @@ module.exports = class OrderController {
                 },
                 include: "orderItems",
             });
+            if (order.couponCode) {
+                await Coupon.increment(
+                    { usedQuantity: -1 },
+                    { where: { code: order.couponCode } }
+                );
+            }
             for (const orderItem of order.orderItems) {
                 await Item.increment(
                     { stock: orderItem.quantity },
