@@ -30,6 +30,7 @@ const MenuPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [product, setProduct] = useState(null);
+    const [isSendNotification, setIsSendNotification] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
     const [imagesFile, setImagesFile] = useState(null);
     const [maxImagesFileError, setMaxImagesFileError] = useState(null);
@@ -182,11 +183,13 @@ const MenuPage = () => {
                         ...product,
                         thumbnail: secure_url,
                         images,
+                        isSendNotification,
                     });
                 } else {
                     addProduct({
                         ...product,
                         thumbnail: secure_url,
+                        isSendNotification,
                     });
                 }
             }
@@ -550,6 +553,27 @@ const MenuPage = () => {
                                 )}
                             </>
                         )}
+                    </div>
+                    <div
+                        className={`flex mb-4 ${
+                            editingProductId ? "hidden" : ""
+                        }`}
+                    >
+                        <input
+                            id="send"
+                            name="send"
+                            type="checkbox"
+                            value={isSendNotification}
+                            onChange={() =>
+                                setIsSendNotification((prev) => !prev)
+                            }
+                        />
+                        <label
+                            htmlFor="send"
+                            className="text-sm font-semibold text-gray-600 ml-1"
+                        >
+                            Send notification about new food to customers
+                        </label>
                     </div>
                     <div className="flex justify-between">
                         <Button

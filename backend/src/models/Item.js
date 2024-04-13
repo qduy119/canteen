@@ -45,7 +45,6 @@ module.exports = (sequelize, DataTypes) => {
             discount: DataTypes.FLOAT,
             stock: DataTypes.INTEGER,
             images: DataTypes.JSON,
-            quantity: DataTypes.INTEGER,
             rating: {
                 type: DataTypes.FLOAT,
                 defaultValue: 0,

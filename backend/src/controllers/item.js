@@ -1,5 +1,6 @@
 const { Op } = require("sequelize");
 const { Item, Review, OrderItem, User, sequelize } = require("../models");
+const NodeMailer = require("../utils/mail");
 
 module.exports = class ItemController {
     static async getAll(req, res) {
@@ -97,10 +98,24 @@ module.exports = class ItemController {
     }
     static async create(req, res) {
         try {
-            const payload = req.body;
-            await Item.create(payload);
+            const { isSendNotification, ...payload } = req.body;
+            const item = await Item.create(payload);
+            if (isSendNotification) {
+                let emails = await User.findAll({
+                    where: {
+                        role: {
+                            [Op.ne]: "Admin",
+                        },
+                    },
+                    attributes: ["email"],
+                });
+                emails = emails.map((item) => item.email).join(", ");
+                const mailService = new NodeMailer(emails);
+                await mailService.send("💥 MYCANTEEN: NEW FOOD 🥪", item);
+            }
             res.status(200).json({});
         } catch (error) {
+            console.log(error.message);
             res.status(500).json({ error });
         }
     }

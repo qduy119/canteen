@@ -19,7 +19,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441477/canteen/product/t6n2e6223cgmo1n8pw56.jpg",
                     ]),
-                    quantity: 14,
                     rating: 0,
                 },
                 {
@@ -35,7 +34,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441610/canteen/product/adhuqn4nhzbrrm2ajhby.jpg",
                     ]),
-                    quantity: 14,
                     rating: 0,
                 },
                 {
@@ -51,7 +49,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441686/canteen/product/zu2fzrxxy7titzenhqee.jpg",
                     ]),
-                    quantity: 14,
                     rating: 0,
                 },
                 {
@@ -67,7 +64,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441762/canteen/product/db9dfnm8jnxhegblr3te.jpg",
                     ]),
-                    quantity: 14,
                     rating: 0,
                 },
                 {
@@ -83,7 +79,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441837/canteen/product/aiocuaiqjexu7tes4jrt.jpg",
                     ]),
-                    quantity: 14,
                     rating: 0,
                 },
                 {
@@ -99,7 +94,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704441935/canteen/product/zyl6lnbml8iz0lqklmmk.jpg",
                     ]),
-                    quantity: 15,
                     rating: 0,
                 },
                 {
@@ -115,7 +109,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442030/canteen/product/ejuwj6bd2pporrchxjhy.jpg",
                     ]),
-                    quantity: 15,
                     rating: 0,
                 },
                 {
@@ -131,7 +124,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442087/canteen/product/gar0wmlzgcm4r5jisjpx.jpg",
                     ]),
-                    quantity: 15,
                     rating: 0,
                 },
                 {
@@ -147,7 +139,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442154/canteen/product/jbnrqovhemvrxnhvsnsl.jpg",
                     ]),
-                    quantity: 15,
                     rating: 0,
                 },
                 {
@@ -163,7 +154,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442198/canteen/product/x5uezmvtqiphprybvdzw.jpg",
                     ]),
-                    quantity: 15,
                     rating: 0,
                 },
                 {
@@ -179,7 +169,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442382/canteen/product/caf57rmffffvsbnyzs0f.jpg",
                     ]),
-                    quantity: 12,
                     rating: 0,
                 },
                 {
@@ -195,7 +184,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442499/canteen/product/in5u8hglv5ni43oimalv.jpg",
                     ]),
-                    quantity: 12,
                     rating: 0,
                 },
                 {
@@ -211,7 +199,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442595/canteen/product/dsbnhpkzpwksifs7iftw.jpg",
                     ]),
-                    quantity: 12,
                     rating: 0,
                 },
                 {
@@ -227,7 +214,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442674/canteen/product/f88ivwcmutfiaoj2hv4k.jpg",
                     ]),
-                    quantity: 12,
                     rating: 0,
                 },
                 {
@@ -243,7 +229,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442806/canteen/product/pc9zqmoy64wxxa9ufjj8.jpg",
                     ]),
-                    quantity: 12,
                     rating: 0,
                 },
                 {
@@ -259,7 +244,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704442892/canteen/product/td0kt8r33tknbqmzore4.jpg",
                     ]),
-                    quantity: 11,
                     rating: 0,
                 },
                 {
@@ -275,7 +259,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443010/canteen/product/cieg3eonezz7cddk9xal.jpg",
                     ]),
-                    quantity: 11,
                     rating: 0,
                 },
                 {
@@ -291,7 +274,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443101/canteen/product/em2wcfmhweimozputhgm.jpg",
                     ]),
-                    quantity: 11,
                     rating: 0,
                 },
                 {
@@ -307,7 +289,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443166/canteen/product/g8kzufesu4umc9ukk1yn.jpg",
                     ]),
-                    quantity: 11,
                     rating: 0,
                 },
                 {
@@ -323,7 +304,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443246/canteen/product/f7ihkeg5ucytoue3ej7x.jpg",
                     ]),
-                    quantity: 11,
                     rating: 0,
                 },
                 {
@@ -339,7 +319,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443677/canteen/product/hkxhslvyjbhqd22j2lsc.png",
                     ]),
-                    quantity: 13,
                     rating: 0,
                 },
                 {
@@ -355,7 +334,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443739/canteen/product/m9ij1nbvgi7ouzvrujp7.png",
                     ]),
-                    quantity: 13,
                     rating: 0,
                 },
                 {
@@ -371,7 +349,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443832/canteen/product/dcwrgna5ryogmkoy4j0h.png",
                     ]),
-                    quantity: 13,
                     rating: 0,
                 },
                 {
@@ -387,7 +364,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443895/canteen/product/elkkftpfm4j2r3nuzomc.png",
                     ]),
-                    quantity: 13,
                     rating: 0,
                 },
                 {
@@ -403,7 +379,6 @@ module.exports = {
                     images: JSON.stringify([
                         "https://res.cloudinary.com/dlzyiprib/image/upload/v1704443984/canteen/product/yvwwbnvhmyonrvc9wqvi.png",
                     ]),
-                    quantity: 13,
                     rating: 0,
                 },
             ],

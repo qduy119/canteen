@@ -23,7 +23,6 @@ module.exports = {
             discount: Sequelize.FLOAT,
             stock: Sequelize.INTEGER,
             images: Sequelize.JSON,
-            quantity: Sequelize.INTEGER,
             rating: {
                 type: Sequelize.FLOAT,
                 defaultValue: 0,
