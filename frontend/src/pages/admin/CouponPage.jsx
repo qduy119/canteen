@@ -5,18 +5,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CouponFormDialog from "../../components/Dialog/FormDialog";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import AdminTable from "../../components/Table/Table";
-import Toast from "../../components/Toast/Toast";
 import { formatDate, formatDateOfBirth } from "../../utils";
 import {
     useAddCouponMutation,
     useDeleteCouponMutation,
-    useLazyGetAllCouponQuery,
+    useGetAllCouponQuery,
     useModifyCouponMutation,
 } from "../../services/coupon";
 import { toast } from "react-toastify";
 
 export default function CouponPage() {
-    const [getAllCoupon, { data: coupons }] = useLazyGetAllCouponQuery();
+    const { data: coupons } = useGetAllCouponQuery();
     const [addCoupon, { isSuccess: addCouponSuccess }] = useAddCouponMutation();
     const [modifyCoupon, { isSuccess: modifyCouponSuccess }] =
         useModifyCouponMutation();
@@ -69,19 +68,12 @@ export default function CouponPage() {
     }
 
     useEffect(() => {
-        getAllCoupon();
-    }, [getAllCoupon]);
-
-    useEffect(() => {
         if (deleteCouponSuccess) {
             toast.success("Delete successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCoupon();
-            }, 500);
         }
-    }, [deleteCouponSuccess, getAllCoupon]);
+    }, [deleteCouponSuccess]);
     useEffect(() => {
         if (modifyCouponSuccess) {
             setIsLoading(false);
@@ -89,11 +81,8 @@ export default function CouponPage() {
             toast.success("Edit successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCoupon();
-            }, 500);
         }
-    }, [modifyCouponSuccess, getAllCoupon]);
+    }, [modifyCouponSuccess]);
     useEffect(() => {
         if (addCouponSuccess) {
             setIsLoading(false);
@@ -101,11 +90,8 @@ export default function CouponPage() {
             toast.success("Add successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCoupon();
-            }, 500);
         }
-    }, [addCouponSuccess, getAllCoupon]);
+    }, [addCouponSuccess]);
 
     const columns = [
         { field: "id", headerName: "ID", width: 75 },
@@ -321,7 +307,6 @@ export default function CouponPage() {
                     pageSizeOptions={[10, 20, 30, 40, 50]}
                 />
             </div>
-            <Toast />
         </div>
     );
 }

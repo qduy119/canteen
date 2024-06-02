@@ -15,8 +15,12 @@ const getItemsInCart = createAsyncThunk(
             );
             return res.data;
         } catch (error) {
-            const { data } = error.response;
-            throw new Error(data);
+            return {
+                error: {
+                    status: error.response?.status,
+                    data: error.response?.data || error.message,
+                },
+            };
         }
     }
 );

@@ -7,7 +7,6 @@ import getItemsInCart from "../../features/cart/getItemsInCart";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import PersonIcon from "@mui/icons-material/Person";
 import CartItem from "../../components/Cart/CartItem";
-import Toast from "../../components/Toast/Toast";
 import { formatPrice } from "../../utils";
 
 export default function CartPage() {
@@ -154,7 +153,6 @@ export default function CartPage() {
                     </button>
                 </div>
             </div>
-            <Toast />
         </div>
     );
 }

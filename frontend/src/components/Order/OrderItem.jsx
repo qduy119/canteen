@@ -44,6 +44,15 @@ export default function OrderItem({
             <td className="whitespace-nowrap px-6 py-4">
                 {payment?.cardType ?? "Null"}
             </td>
+            <td className="whitespace-nowrap px-6 py-4">
+                {item?.couponCode ?? "Null"}
+            </td>
+            <td className="whitespace-nowrap px-6 py-4">
+                {item?.couponTitle ?? "Null"}
+            </td>
+            <td className="whitespace-nowrap px-6 py-4">
+                {item?.discountPercentage ?? "Null"}
+            </td>
             <td className="whitespace-nowrap px-6 py-4">${item.total}</td>
             <td className="whitespace-nowrap px-6 py-4">
                 {item.seatNumber ?? "Null"}

@@ -7,7 +7,7 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import {
     useAddUserMutation,
     useDeleteUserMutation,
-    useLazyGetAllUserQuery,
+    useGetAllUserQuery,
     useModifyUserMutation,
 } from "../../services/privateAuth";
 import { useDropzone } from "react-dropzone";
@@ -15,11 +15,10 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import { toast } from "react-toastify";
 import { formatDateOfBirth } from "../../utils";
 import CategoryFormDialog from "../../components/Dialog/FormDialog";
-import Toast from "../../components/Toast/Toast";
 import AdminTable from "../../components/Table/Table";
 
 export default function CustomerPage() {
-    const [getAllUsers, { data: users }] = useLazyGetAllUserQuery();
+    const { data: users } = useGetAllUserQuery();
     const [addUser, { isSuccess: addUserSuccess, isError: addUserError }] =
         useAddUserMutation();
     const [updateUser, { isSuccess: updateUserSuccess }] =
@@ -101,18 +100,12 @@ export default function CustomerPage() {
     };
 
     useEffect(() => {
-        getAllUsers();
-    }, [getAllUsers]);
-    useEffect(() => {
         if (deleteUserSuccess) {
             toast.success("Delete successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllUsers();
-            }, 500);
         }
-    }, [deleteUserSuccess, getAllUsers]);
+    }, [deleteUserSuccess]);
     useEffect(() => {
         if (updateUserSuccess) {
             setIsLoading(false);
@@ -120,11 +113,8 @@ export default function CustomerPage() {
             toast.success("Update successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllUsers();
-            }, 500);
         }
-    }, [updateUserSuccess, getAllUsers]);
+    }, [updateUserSuccess]);
     useEffect(() => {
         if (addUserSuccess) {
             setIsLoading(false);
@@ -132,11 +122,8 @@ export default function CustomerPage() {
             toast.success("Add successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllUsers();
-            }, 500);
         }
-    }, [addUserSuccess, getAllUsers]);
+    }, [addUserSuccess]);
     useEffect(() => {
         if (addUserError) {
             setIsLoading(false);
@@ -145,7 +132,7 @@ export default function CustomerPage() {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
         }
-    }, [addUserError, getAllUsers]);
+    }, [addUserError]);
 
     const columns = [
         { field: "id", headerName: "ID", width: 210 },
@@ -200,7 +187,11 @@ export default function CustomerPage() {
             renderCell: (rowData) => {
                 return (
                     <p>
-                        {new Date(rowData.row.dateOfBirth).toLocaleDateString()}
+                        {rowData.row.dateOfBirth
+                            ? new Date(
+                                  rowData.row.dateOfBirth
+                              ).toLocaleDateString()
+                            : null}
                     </p>
                 );
             },
@@ -269,12 +260,14 @@ export default function CustomerPage() {
                             value={user?.email ?? ""}
                             onChange={(e) => handleInputChange(e)}
                             className={`border-none outline-none py-2 px-3 rounded-[4px] bg-gray-100 ${
-                                editingUserId || (user?.provider !== "default" && editingUserId)
+                                editingUserId ||
+                                (user?.provider !== "default" && editingUserId)
                                     ? "pointer-events-none opacity-60"
                                     : ""
                             }`}
                             disabled={
-                                editingUserId || (user?.provider !== "default" && editingUserId)
+                                editingUserId ||
+                                (user?.provider !== "default" && editingUserId)
                             }
                         />
                     </div>
@@ -467,7 +460,6 @@ export default function CustomerPage() {
                     pageSizeOptions={[10, 20, 30, 40, 50]}
                 />
             </div>
-            <Toast />
         </div>
     );
 }

@@ -7,19 +7,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import {
-    useLazyGetAllProductQuery,
     useAddProductMutation,
     useModifyProductMutation,
     useDeleteProductMutation,
+    useGetAllProductQuery,
 } from "../../services/item";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import AdminTable from "../../components/Table/Table";
 import ProductFormDialog from "../../components/Dialog/FormDialog";
 import { useLazyGetAllCategoryQuery } from "../../services/category";
-import Toast from "../../components/Toast/Toast";
 
 const MenuPage = () => {
-    const [getAllProduct, { data: products }] = useLazyGetAllProductQuery();
+    const {data: products} = useGetAllProductQuery();
     const [getAllCategory, { data: categories }] = useLazyGetAllCategoryQuery();
     const [addProduct, { isSuccess: addProductSuccess }] =
         useAddProductMutation();
@@ -201,11 +200,8 @@ const MenuPage = () => {
             toast.success("Delete successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllProduct();
-            }, 500);
         }
-    }, [deleteProductSuccess, getAllProduct]);
+    }, [deleteProductSuccess]);
     useEffect(() => {
         if (modifyProductSuccess) {
             setIsLoading(false);
@@ -213,11 +209,8 @@ const MenuPage = () => {
             toast.success("Edit successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllProduct();
-            }, 500);
         }
-    }, [modifyProductSuccess, getAllProduct]);
+    }, [modifyProductSuccess]);
     useEffect(() => {
         if (addProductSuccess) {
             setIsLoading(false);
@@ -225,14 +218,8 @@ const MenuPage = () => {
             toast.success("Add successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllProduct();
-            }, 500);
         }
-    }, [addProductSuccess, getAllProduct]);
-    useEffect(() => {
-        getAllProduct();
-    }, [getAllProduct]);
+    }, [addProductSuccess]);
     useEffect(() => {
         getAllCategory();
     }, [getAllCategory]);
@@ -284,7 +271,7 @@ const MenuPage = () => {
             align: "center",
             type: "number",
             width: 100,
-            renderCell: (rowData) => <p>{rowData.row.price}%</p>,
+            renderCell: (rowData) => <p>{rowData.row.discount}%</p>,
         },
         {
             field: "rating",
@@ -603,7 +590,6 @@ const MenuPage = () => {
                     pageSizeOptions={[10, 20, 30, 40, 50]}
                 />
             </div>
-            <Toast />
         </div>
     );
 };

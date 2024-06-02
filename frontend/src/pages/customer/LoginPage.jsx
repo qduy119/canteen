@@ -70,9 +70,9 @@ export default function LoginPage() {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
             const { user } = data;
-            dispatch(getItemsInCart({ userId: user.id }));
             setTimeout(() => {
                 if (user.role === "Customer") {
+                    dispatch(getItemsInCart({ userId: user.id }));
                     navigate(location?.state?.from ?? "/");
                 } else if (user.role === "Admin") {
                     navigate("/admin");
@@ -150,7 +150,7 @@ export default function LoginPage() {
                         ) : null}
                         <button
                             type="submit"
-                            className="flex justify-center items-center gap-2 mt-3 max-w-full rounded-[4px] border-none outline-non text-white font-bold text-xl bg-primary hover:bg-primary-dark py-2"
+                            className="flex justify-center items-center gap-2 mt-3 max-w-full rounded-[4px] border-none outline-none text-white font-bold text-xl bg-primary hover:bg-primary-dark py-2"
                         >
                             LOGIN{" "}
                             <span

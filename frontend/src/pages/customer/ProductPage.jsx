@@ -13,7 +13,6 @@ import { IconButton } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAddCartItemsMutation } from "../../services/cart";
 import getItemsInCart from "../../features/cart/getItemsInCart";
-import Toast from "../../components/Toast/Toast";
 import Review from "../../components/Review/Review";
 
 export default function ProductPage() {
@@ -209,7 +208,6 @@ export default function ProductPage() {
                 <h1 className="font-semibold text-3xl mb-4">Reviews</h1>
                 <Review review={review} rating={food.rating} />
             </div>
-            <Toast />
         </div>
     );
 }

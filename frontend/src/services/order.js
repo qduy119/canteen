@@ -13,6 +13,7 @@ const orderApi = createApi({
                 url: `/api/order/${payload.orderId}`,
                 method: "GET",
             }),
+            providesTags: (result, error, id) => [{ type: "Order", id }],
         }),
         getAllOrderByUserId: builder.query({
             query: (payload) => ({
@@ -20,6 +21,13 @@ const orderApi = createApi({
                 method: "GET",
             }),
             keepUnusedDataFor: 5,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.data.map(({ id }) => ({ type: "OrderUser", id })),
+                          "OrderUser",
+                      ]
+                    : ["OrderUser"],
         }),
         getAllOrder: builder.query({
             query: () => ({
@@ -27,12 +35,23 @@ const orderApi = createApi({
                 method: "GET",
             }),
             keepUnusedDataFor: 5,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ id }) => ({ type: "Orders", id })),
+                          "Orders",
+                      ]
+                    : ["Orders"],
         }),
         cancelOrder: builder.mutation({
             query: ({ id }) => ({
                 url: `/api/order/cancel/${id}`,
                 method: "PUT",
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Orders", id: arg.id },
+                { type: "OrderUser", id: arg.id },
+            ],
         }),
         addOrder: builder.mutation({
             query: (payload) => ({
@@ -47,12 +66,17 @@ const orderApi = createApi({
                 method: "PUT",
                 body: payload,
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Orders", id: arg.id },
+                { type: "OrderUser", id: arg.id },
+            ],
         }),
         deleteOrder: builder.mutation({
             query: (payload) => ({
                 url: `/api/order/${payload.id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Orders", "OrderUser"],
         }),
     }),
 });

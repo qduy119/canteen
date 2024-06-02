@@ -1,59 +1,183 @@
-import { Link } from 'react-router-dom';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import PersonIcon from '@mui/icons-material/Person';
-
+import { Link } from "react-router-dom";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import PersonIcon from "@mui/icons-material/Person";
+import { formatDateOfBirth } from "../../utils";
+import { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
+import {
+    useLazyGetUserByIdQuery,
+    useModifyUserMutation,
+} from "../../services/privateAuth";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../features/auth/authSlice";
 
 export default function ProfilePage() {
+    const user = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
+    const [getUser, { data: userData, isSuccess: getUserSuccess }] =
+        useLazyGetUserByIdQuery();
+    const [credentials, setCredentials] = useState(() => {
+        const { id, avatar, fullName, phoneNumber, gender, dateOfBirth } = user;
+        return { id, avatar, fullName, phoneNumber, gender, dateOfBirth };
+    });
+    const [imageFile, setImageFile] = useState(null);
+    const [updateUserMutation, { isSuccess: updateUserSuccess, isLoading }] =
+        useModifyUserMutation();
+
+    const onDrop = (acceptedFiles) => {
+        const file = acceptedFiles[0];
+        setImageFile(file);
+        const imageUrl = URL.createObjectURL(file);
+        setCredentials((prev) => ({ ...prev, avatar: imageUrl }));
+    };
+
+    const { getRootProps } = useDropzone({
+        accept: {
+            "image/*": [".jpeg", ".jpg", ".png"],
+        },
+        onDrop,
+    });
+    function handleChange(e) {
+        setCredentials((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+    }
+    async function handleSubmit(e) {
+        e.preventDefault();
+        if (imageFile) {
+            const res = await uploadToCloudinary(imageFile, "canteen/user");
+            const { secure_url } = res.data;
+            updateUserMutation({ ...credentials, avatar: secure_url });
+        } else {
+            updateUserMutation(credentials);
+        }
+    }
+
+    useEffect(() => {
+        if (updateUserSuccess) {
+            toast.success("Update successfully", {
+                position: toast.POSITION.BOTTOM_RIGHT,
+            });
+            getUser({ id: user.id });
+        }
+    }, [updateUserSuccess, getUser, user.id]);
+    useEffect(() => {
+        if (getUserSuccess) {
+            dispatch(updateUser({ user: userData }));
+        }
+    }, [getUserSuccess, dispatch, userData]);
+
     return (
-        <div className="w-full px-[300px]">
-            <div className='mx-auto'>
-                <Link to="../" className='flex items-center px-3 py-4 hover:underline'>
+        <div className="w-full">
+            <div className="mx-auto px-[10%] sm:px-[20%] my-10">
+                <Link
+                    to="../"
+                    className="flex items-center px-3 py-4 hover:underline text-primary"
+                >
                     <ArrowBackIosNewIcon />
                     BACK TO HOME PAGE
                 </Link>
-                <div className='bg-gray-200 rounded-lg'>
-                    <div className='flex items-center px-3 py-2'>
+                <div className="bg-gray-200 rounded-lg p-2">
+                    <div className="flex items-center px-3 py-2">
                         <PersonIcon />
                         PROFILE
                     </div>
-                    <div className='z-[1000] w-full h-[1px] bg-black/20' />
-                    <div className='py-3 px-10'>
-                        <div >
-                            <div className='rounded-full w-[130px] h-[130px] bg-red-50 mx-auto'>
-                                <img src="" alt="" className='object-fit' />
+                    <div className="z-[1000] w-full h-[1px] bg-black/20" />
+                    <form action="/" onSubmit={handleSubmit}>
+                        <div className="py-3 px-10">
+                            <div
+                                {...getRootProps()}
+                                className={`dropzone mx-auto w-[120px] h-[120px] ${
+                                    user?.provider !== "default"
+                                        ? "pointer-events-none opacity-70"
+                                        : ""
+                                }`}
+                            >
+                                <img
+                                    src={credentials?.avatar}
+                                    alt="User Avatar"
+                                    className="object-cover w-[120px] h-[120px] rounded-full"
+                                />
                             </div>
-                            <p className='mt-2 text-center'>Current Name</p>
+                            <div className="mt-3">
+                                <div className="flex flex-col mb-3">
+                                    <label htmlFor="fullname">Full Name</label>
+                                    <input
+                                        type="text"
+                                        id="fullname"
+                                        className="rounded-[4px] py-2 px-3 border-none outline-none"
+                                        name="fullName"
+                                        value={credentials?.fullName}
+                                        onChange={(e) => handleChange(e)}
+                                    />
+                                </div>
+                                <div className="flex flex-col mb-3">
+                                    <label htmlFor="number">Phone Number</label>
+                                    <input
+                                        type="text"
+                                        id="number"
+                                        className="rounded-[4px] py-2 px-3 border-none outline-none"
+                                        name="phoneNumber"
+                                        value={credentials?.phoneNumber}
+                                        onChange={(e) => handleChange(e)}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-x-2 mb-3">
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            id="male"
+                                            name="gender"
+                                            value="Male"
+                                            checked={
+                                                credentials?.gender === "Male"
+                                            }
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                        <label htmlFor="male">Male</label>
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            id="female"
+                                            name="gender"
+                                            value="Female"
+                                            checked={
+                                                credentials?.gender === "Female"
+                                            }
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                        <label htmlFor="female">Female</label>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-x-2">
+                                    <label htmlFor="dob">Date of birth</label>
+                                    <input
+                                        type="date"
+                                        id="dob"
+                                        className="rounded-[4px] py-2 px-3 border-none outline-none"
+                                        name="dateOfBirth"
+                                        value={formatDateOfBirth(
+                                            credentials?.dateOfBirth
+                                        )}
+                                        onChange={(e) => handleChange(e)}
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                className="flex justify-center items-center gap-2 mt-3 w-full rounded-[4px] border-none outline-none text-white font-bold text-xl bg-primary hover:bg-primary-dark py-2"
+                            >
+                                SAVE{" "}
+                                {isLoading ? <span className="bar" /> : null}
+                            </button>
                         </div>
-                        <div className='flex items-center gap-x-2'>
-                            <div>
-                                <input type="checkbox" id='male' />
-                                <label htmlFor="male">Male</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id='female' />
-                                <label htmlFor="female">Female</label>
-                            </div>
-                        </div>
-                        <div className='mt-3'>
-                            <div className='flex flex-col mb-3'>
-                                <label htmlFor="fullname">Full Name</label>
-                                <input type="text" id='fullname' className='rounded-[4px] py-2 px-3 border-none outline-none' />
-                            </div>
-                            <div className='flex flex-col mb-3'>
-                                <label htmlFor="number">Phone Number</label>
-                                <input type="text" id='number' className='rounded-[4px] py-2 px-3 border-none outline-none' />
-                            </div>
-                            <div className='flex flex-col mb-3'>
-                                <label htmlFor="email">Email (optional)</label>
-                                <input type="email" id='email' className='rounded-[4px] py-2 px-3 border-none outline-none' />
-                            </div>
-                        </div>
-                        <button className='mt-4 uppercase font-bold text-2xl text-center py-3 bg-primary hover:bg-primary-dark w-full rounded-[4px] text-white'>
-                            SAVE
-                        </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
-    )
+    );
 }

@@ -41,9 +41,9 @@ export default function UserMask({ imageUrl, role }) {
     }
     useEffect(() => {
         if (isSuccess) {
-            navigate("/");
             dispatch(resetCart());
             dispatch(logoutSuccess());
+            navigate("/");
         }
     }, [isSuccess, navigate, dispatch]);
 

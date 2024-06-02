@@ -15,7 +15,7 @@ export const axiosBaseQuery =
             });
             return { data: result.data };
         } catch (axiosError) {
-            let err = axiosError;
+            const err = axiosError;
             return {
                 error: {
                     status: err.response?.status,

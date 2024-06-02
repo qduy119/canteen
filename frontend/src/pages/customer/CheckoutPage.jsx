@@ -22,7 +22,6 @@ import getItemsInCart from "../../features/cart/getItemsInCart";
 import CustomCheckoutDialog from "../../components/Dialog/CustomCheckoutDialog";
 import CouponSelectionDialog from "../../components/Dialog/CouponSelectionDialog";
 import { toast } from "react-toastify";
-import Toast from "../../components/Toast/Toast";
 import CheckoutItem from "../../components/Checkout/CheckoutItem";
 
 export default function CheckoutPage() {
@@ -324,7 +323,6 @@ export default function CheckoutPage() {
                     </button>
                 </div>
             </div>
-            <Toast />
             <CustomCheckoutDialog title={"Select a method"} open={modalOpen}>
                 <div className="flex gap-5">
                     <button

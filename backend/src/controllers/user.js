@@ -28,6 +28,7 @@ module.exports = class UserController {
         try {
             const { id } = req.params;
             const data = await User.findByPk(id);
+            delete data.get().password;
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error });
@@ -84,7 +85,9 @@ module.exports = class UserController {
         try {
             const id = uuid();
             const payload = req.body;
-            const user = await User.findOne({ where: { email: payload.email } });
+            const user = await User.findOne({
+                where: { email: payload.email },
+            });
             if (user) {
                 return res.status(409).json("User already exists");
             }

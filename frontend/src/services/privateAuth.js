@@ -18,6 +18,13 @@ const privateAuthApi = createApi({
                 url: "/api/user",
             }),
             keepUnusedDataFor: 5,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ id }) => ({ type: "User", id })),
+                          "User",
+                      ]
+                    : ["User"],
         }),
         addUser: builder.mutation({
             query: (payload) => ({
@@ -25,6 +32,7 @@ const privateAuthApi = createApi({
                 method: "POST",
                 body: payload,
             }),
+            invalidatesTags: ["User"],
         }),
         modifyUser: builder.mutation({
             query: (payload) => ({
@@ -32,12 +40,16 @@ const privateAuthApi = createApi({
                 method: "PUT",
                 body: payload,
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "User", id: arg.id },
+            ],
         }),
         deleteUser: builder.mutation({
             query: (payload) => ({
                 url: `/api/user/${payload.id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["User"],
         }),
         logout: builder.mutation({
             query: () => ({

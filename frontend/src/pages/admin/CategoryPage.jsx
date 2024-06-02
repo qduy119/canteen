@@ -6,19 +6,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import {
-    useLazyGetAllCategoryQuery,
     useAddCategoryMutation,
     useModifyCategoryMutation,
     useDeleteCategoryMutation,
+    useGetAllCategoryQuery,
 } from "../../services/category";
 import CategoryFormDialog from "../../components/Dialog/FormDialog";
 import AdminTable from "../../components/Table/Table";
-import Toast from "../../components/Toast/Toast";
 import { toast } from "react-toastify";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 function CategoryPage() {
-    const [getAllCategory, { data: categories }] = useLazyGetAllCategoryQuery();
+    const { data: categories } = useGetAllCategoryQuery();
     const [addCategory, { isSuccess: addCategorySuccess }] =
         useAddCategoryMutation();
     const [modifyCategory, { isSuccess: modifyCategorySuccess }] =
@@ -105,25 +104,19 @@ function CategoryPage() {
     };
 
     useEffect(() => {
-        getAllCategory();
-    }, [getAllCategory]);
-    useEffect(() => {
         if (deleteCategorySuccess) {
             toast.success("Delete successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCategory();
-            }, 500);
         }
-    }, [deleteCategorySuccess, getAllCategory]);
+    }, [deleteCategorySuccess]);
     useEffect(() => {
         if (deleteCategoryError) {
             toast.error("Can't delete this category", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
         }
-    }, [deleteCategoryError, getAllCategory]);
+    }, [deleteCategoryError]);
     useEffect(() => {
         if (modifyCategorySuccess) {
             setIsLoading(false);
@@ -131,11 +124,8 @@ function CategoryPage() {
             toast.success("Edit successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCategory();
-            }, 500);
         }
-    }, [modifyCategorySuccess, getAllCategory]);
+    }, [modifyCategorySuccess]);
     useEffect(() => {
         if (addCategorySuccess) {
             setIsLoading(false);
@@ -143,11 +133,8 @@ function CategoryPage() {
             toast.success("Add successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllCategory();
-            }, 500);
         }
-    }, [addCategorySuccess, getAllCategory]);
+    }, [addCategorySuccess]);
 
     const columns = [
         { field: "id", headerName: "ID", width: 100 },
@@ -331,7 +318,6 @@ function CategoryPage() {
                     pageSizeOptions={[10, 20, 30, 40, 50]}
                 />
             </div>
-            <Toast />
         </div>
     );
 }

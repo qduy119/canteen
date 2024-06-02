@@ -13,7 +13,14 @@ const categoryApi = createApi({
                 url: "/api/category",
                 method: "GET",
             }),
-            keepUnusedDataFor: 5
+            keepUnusedDataFor: 5,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ id }) => ({ type: "Category", id })),
+                          "Category",
+                      ]
+                    : ["Category"],
         }),
         addCategory: builder.mutation({
             query: (payload) => ({
@@ -21,6 +28,7 @@ const categoryApi = createApi({
                 method: "POST",
                 body: payload,
             }),
+            invalidatesTags: ["Category"],
         }),
         modifyCategory: builder.mutation({
             query: ({ id, ...payload }) => ({
@@ -28,12 +36,16 @@ const categoryApi = createApi({
                 method: "PUT",
                 body: payload,
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Category", id: arg.id },
+            ],
         }),
         deleteCategory: builder.mutation({
             query: ({ id }) => ({
                 url: `/api/category/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Category"],
         }),
     }),
 });

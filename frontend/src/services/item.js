@@ -13,7 +13,14 @@ const itemApi = createApi({
                 url: "/api/item",
                 method: "GET",
             }),
-            keepUnusedDataFor: 5
+            keepUnusedDataFor: 5,
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map(({ id }) => ({ type: "Item", id })),
+                          "Item",
+                      ]
+                    : ["Item"],
         }),
         getTopSales: builder.query({
             query: () => ({
@@ -28,6 +35,7 @@ const itemApi = createApi({
                 method: "POST",
                 body: payload,
             }),
+            invalidatesTags: ["Item"],
         }),
         modifyProduct: builder.mutation({
             query: ({ id, ...payload }) => ({
@@ -35,18 +43,23 @@ const itemApi = createApi({
                 method: "PUT",
                 body: payload,
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Item", id: arg.id },
+            ],
         }),
         deleteProduct: builder.mutation({
             query: ({ id }) => ({
                 url: `/api/item/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Item"],
         }),
     }),
 });
 
 export const {
     useGetTopSalesQuery,
+    useGetAllProductQuery,
     useLazyGetAllProductQuery,
     useAddProductMutation,
     useModifyProductMutation,

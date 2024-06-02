@@ -14,6 +14,7 @@ const seatApi = createApi({
                 method: "GET",
             }),
             keepUnusedDataFor: 5,
+            providesTags: ["Seats"],
         }),
         addSeatReservation: builder.mutation({
             query: (payload) => ({
@@ -21,17 +22,20 @@ const seatApi = createApi({
                 method: "POST",
                 body: payload,
             }),
+            invalidatesTags: ["Seats"],
         }),
         deleteSeatReservation: builder.mutation({
             query: (payload) => ({
                 url: `/api/seat-reservation?seatNumber=${payload.seatNumber}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Seats"],
         }),
     }),
 });
 
 export const {
+    useGetAllSeatReservationQuery,
     useLazyGetAllSeatReservationQuery,
     useAddSeatReservationMutation,
     useDeleteSeatReservationMutation,

@@ -7,6 +7,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import Sidebar from "../components/Sidebar/Sidebar";
 import UserMask from "../components/User/UserMask";
 import AuthErrorPage from "../pages/customer/AuthErrorPage";
+import Toast from "../components/Toast/Toast";
 
 export default function AdminLayout() {
     const user = useSelector((state) => state.auth.user);
@@ -38,6 +39,7 @@ export default function AdminLayout() {
                 </div>
                 <Outlet />
             </div>
+            <Toast />
         </div>
     ) : (
         <AuthErrorPage />

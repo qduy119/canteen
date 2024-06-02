@@ -192,7 +192,7 @@ export default function SignupPage() {
                     ) : null}
                     <button
                         type="submit"
-                        className="flex justify-center items-center gap-2 mt-3 max-w-full rounded-[4px] border-none outline-non text-white font-bold text-xl bg-primary hover:bg-primary-dark py-2"
+                        className="flex justify-center items-center gap-2 mt-3 max-w-full rounded-[4px] border-none outline-none text-white font-bold text-xl bg-primary hover:bg-primary-dark py-2"
                     >
                         SIGN UP{" "}
                         <span className={`bar ${isLoading ? "" : "hidden"}`} />

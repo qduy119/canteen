@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
+import Toast from "../components/Toast/Toast";
 
 export default function CustomerLayout() {
     return (
@@ -10,6 +11,7 @@ export default function CustomerLayout() {
                 <Outlet />
             </div>
             <Footer />
+            <Toast />
         </div>
     );
 }

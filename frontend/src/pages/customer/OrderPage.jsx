@@ -7,25 +7,24 @@ import PersonIcon from "@mui/icons-material/Person";
 import OrderItem from "../../components/Order/OrderItem";
 import {
     useDeleteSeatReservationMutation,
-    useLazyGetAllSeatReservationQuery,
+    useGetAllSeatReservationQuery,
 } from "../../services/seat";
 import {
-    useLazyGetAllOrderByUserIdQuery,
     useCancelOrderMutation,
+    useLazyGetAllOrderByUserIdQuery,
 } from "../../services/order";
 import {
     useCreatePaymentUrlMutation,
     useLazyGetPaymentQuery,
 } from "../../services/payment";
 import OrderPagination from "../../components/Pagination/DefaultPagination";
-import Toast from "../../components/Toast/Toast";
 
 export default function OrderPage() {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const page = parseInt(query.get("page") || "1", 10);
-    const [getAllSeats, { data: seats }] = useLazyGetAllSeatReservationQuery();
-    const [getAllOrders, { data: order }] = useLazyGetAllOrderByUserIdQuery();
+    const [getAllOrders, { data: orders }] = useLazyGetAllOrderByUserIdQuery();
+    const { data: seats } = useGetAllSeatReservationQuery();
     const user = useSelector((state) => state.auth.user);
     const [getPayment, { data: payments }] = useLazyGetPaymentQuery();
     const [cancelOrder, { isSuccess: cancelOrderSuccess }] =
@@ -66,30 +65,21 @@ export default function OrderPage() {
             toast.success("Return table successfully !", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllSeats();
-            }, 500);
         }
-    }, [returnSeatSuccess, getAllSeats]);
+    }, [returnSeatSuccess]);
     useEffect(() => {
         if (cancelOrderSuccess) {
             toast.success("Cancel order successfully !", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllOrders({ userId: user.id, page, per_page: 10 });
-            }, 500);
         }
-    }, [cancelOrderSuccess, getAllOrders, user?.id, page]);
+    }, [cancelOrderSuccess]);
     useEffect(() => {
         getPayment({ userId: user.id });
     }, [getPayment, user?.id]);
     useEffect(() => {
         getAllOrders({ userId: user?.id, page, per_page: 10 });
     }, [getAllOrders, page, user?.id]);
-    useEffect(() => {
-        getAllSeats();
-    }, [getAllSeats]);
 
     return (
         <div className="min-h-screen px-5 py-8">
@@ -126,6 +116,15 @@ export default function OrderPage() {
                                     Card Type
                                 </th>
                                 <th scope="col" className="px-6 py-4">
+                                    Coupon Code
+                                </th>
+                                <th scope="col" className="px-6 py-4">
+                                    Coupon Title
+                                </th>
+                                <th scope="col" className="px-6 py-4">
+                                    Discount Percentage
+                                </th>
+                                <th scope="col" className="px-6 py-4">
                                     Amount
                                 </th>
                                 <th scope="col" className="px-6 py-4">
@@ -143,7 +142,7 @@ export default function OrderPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {order?.data?.map((item, index) => (
+                            {orders?.data?.map((item, index) => (
                                 <OrderItem
                                     key={index}
                                     item={item}
@@ -160,12 +159,11 @@ export default function OrderPage() {
                 </div>
                 <div className="flex justify-center items-center mt-10">
                     <OrderPagination
-                        total={order?.["total_pages"]}
+                        total={orders?.["total_pages"]}
                         page={page}
                     />
                 </div>
             </div>
-            <Toast />
         </div>
     );
 }

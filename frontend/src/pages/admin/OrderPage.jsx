@@ -5,11 +5,11 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { IconButton, Tooltip } from "@mui/material";
 import {
     useDeleteSeatReservationMutation,
-    useLazyGetAllSeatReservationQuery,
+    useGetAllSeatReservationQuery,
 } from "../../services/seat";
 import {
-    useLazyGetAllOrderQuery,
     useCancelOrderMutation,
+    useGetAllOrderQuery,
 } from "../../services/order";
 import { useLazyGetAllPaymentQuery } from "../../services/payment";
 import { useLazyGetAllUserQuery } from "../../services/privateAuth";
@@ -19,7 +19,6 @@ import {
     getPaymentByOrderId,
     getUserByOrder,
 } from "../../utils";
-import Toast from "../../components/Toast/Toast";
 import AdminTable from "../../components/Table/Table";
 import Status from "../../components/Status/Status";
 import OrderItemDialogAdmin from "../../components/Dialog/OrderItemDialogAdmin";
@@ -27,8 +26,8 @@ import OrderItemDialogAdmin from "../../components/Dialog/OrderItemDialogAdmin";
 export default function OrderPage() {
     const [getAllUsers, { data: users }] = useLazyGetAllUserQuery();
     const [getAllPayments, { data: payments }] = useLazyGetAllPaymentQuery();
-    const [getAllSeats, { data: seats }] = useLazyGetAllSeatReservationQuery();
-    const [getAllOrders, { data: orders }] = useLazyGetAllOrderQuery();
+    const { data: seats } = useGetAllSeatReservationQuery();
+    const { data: orders } = useGetAllOrderQuery();
     const [cancelOrder, { isSuccess: cancelOrderSuccess }] =
         useCancelOrderMutation();
     const [deleteSeat] = useDeleteSeatReservationMutation();
@@ -50,30 +49,18 @@ export default function OrderPage() {
             toast.success("Return table successfully !", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllSeats();
-            }, 500);
         }
-    }, [returnSeatSuccess, getAllSeats]);
+    }, [returnSeatSuccess]);
     useEffect(() => {
         if (cancelOrderSuccess) {
             toast.success("Cancel order successfully !", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setTimeout(() => {
-                getAllOrders();
-            }, 500);
         }
-    }, [cancelOrderSuccess, getAllOrders]);
+    }, [cancelOrderSuccess]);
     useEffect(() => {
         getAllUsers();
     }, [getAllUsers]);
-    useEffect(() => {
-        getAllSeats();
-    }, [getAllSeats]);
-    useEffect(() => {
-        getAllOrders();
-    }, [getAllOrders]);
     useEffect(() => {
         getAllPayments();
     }, [getAllPayments]);
@@ -183,7 +170,8 @@ export default function OrderPage() {
             sortable: false,
             renderCell: (rowData) => (
                 <p>
-                    {rowData.row.discountPercentage && `${rowData.row.discountPercentage}%`}
+                    {rowData.row.discountPercentage &&
+                        `${rowData.row.discountPercentage}%`}
                 </p>
             ),
         },
@@ -275,7 +263,6 @@ export default function OrderPage() {
                     pageSizeOptions={[10, 20, 30, 40, 50]}
                 />
             </div>
-            <Toast />
         </div>
     );
 }
