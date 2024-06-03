@@ -1,71 +1,47 @@
-const { CartItem, Item } = require("../models");
+const CartItemService = require("../services/CartItem");
 
-module.exports = class CartItemController {
-    static async getAll(req, res) {
+class CartItemController {
+    constructor() {
+        this._cartItemService = new CartItemService();
+    }
+
+    getAll = async (req, res) => {
         try {
             const { userId } = req.query;
-            const data = await CartItem.findAll({
-                where: {
-                    userId,
-                },
-                include: "item",
-            });
+            const data = await this._cartItemService.getAll(userId);
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async create(req, res) {
+    create = async (req, res) => {
         try {
             const payload = req.body;
-            const { userId, itemId, quantity } = payload;
-            const isExist = await CartItem.findOne({
-                where: { userId, itemId },
-            });
-            let data;
-            if (isExist) {
-                isExist.quantity += quantity;
-                data = await isExist.save();
-            } else {
-                data = await CartItem.create(payload);
-            }
-            await Item.increment(
-                { stock: -quantity},
-                { where: { id: itemId } }
-            );
+            const data = await this._cartItemService.create(payload);
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async update(req, res) {
+    update = async (req, res) => {
         try {
             const { id } = req.params;
-            const cartItem = await CartItem.findByPk(id);
             const payload = req.body;
-            const diff = payload.quantity - cartItem.quantity;
-            await Item.increment(
-                { stock: -diff},
-                { where: { id: cartItem.itemId } }
-            );
-            await CartItem.update(payload, { where: { id } });
+            await this._cartItemService.update(id, payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async delete(req, res) {
+    delete = async (req, res) => {
         try {
             const { id } = req.params;
-            const cartItem = await CartItem.findByPk(id);
-            await Item.increment(
-                { stock: cartItem.quantity},
-                { where: { id: cartItem.itemId } }
-            );
-            await CartItem.destroy({ where: { id } });
+            await this._cartItemService.delete(id);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-};
+}
+
+module.exports = new CartItemController();

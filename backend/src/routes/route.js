@@ -9,7 +9,7 @@ const OrderItemController = require("../controllers/orderItem");
 const ReviewController = require("../controllers/review");
 const UserController = require("../controllers/user");
 const CouponController = require("../controllers/coupon");
-const { protect, restrictTo } = require("../middleware/auth");
+const { protect, restrictTo } = require("../middlewares/auth");
 const router = express.Router();
 
 // item

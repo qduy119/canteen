@@ -1,52 +1,55 @@
-const { Op } = require("sequelize");
-const { Coupon, model, sequelize } = require("../models");
+const CouponService = require("../services/Coupon");
 
-module.exports = class CouponController {
-    static async getAll(req, res) {
+class CouponController {
+    constructor() {
+        this._couponService = new CouponService();
+    }
+
+    getAll = async (req, res) => {
         try {
-            const data = await Coupon.findAll();
+            const data = await this._couponService.getAll();
             res.status(200).json(data);
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error });
         }
     }
-    static async getById(req, res) {
+    getById = async (req, res) => {
         try {
             const { id } = req.params;
-            const data = await Coupon.findByPk(id);
+            const data = await this._couponService.getById(id);
             res.status(200).json(data);
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error });
         }
     }
-    static async create(req, res) {
+    create = async (req, res) => {
         try {
             const payload = req.body;
-            await Coupon.create(payload);
+            await this._couponService.create(payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async update(req, res) {
+    update = async (req, res) => {
         try {
             const { id } = req.params;
             const payload = req.body;
-            await Coupon.update(payload, { where: { id } });
+            await this._couponService.update(id, payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async delete(req, res) {
+    delete = async (req, res) => {
         try {
             const { id } = req.params;
-            await Coupon.destroy({ where: { id } });
+            await this._couponService.delete(id);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-};
+}
+
+module.exports = new CouponController();

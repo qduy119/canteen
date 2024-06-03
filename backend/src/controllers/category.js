@@ -1,51 +1,54 @@
-const { Category } = require("../models");
+const CategoryService = require("../services/Category");
 
-module.exports = class CategoryController {
-    static async getAll(req, res) {
+class CategoryController {
+    constructor() {
+        this._categoryService = new CategoryService();
+    }
+    getAll = async (req, res) => {
         try {
-            const data = await Category.findAll();
+            const data = await this._categoryService.getAll();
             res.status(200).json(data);
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error });
         }
     }
-    static async getById(req, res) {
+    getById = async (req, res) => {
         try {
             const { id } = req.params;
-            const data = await Category.findByPk(id);
+            const data = await this._categoryService.getById(id);
             res.status(200).json(data);
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error });
         }
     }
-    static async create(req, res) {
+    create = async (req, res) => {
         try {
             const payload = req.body;
-            await Category.create(payload);
+            await this._categoryService.create(payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async update(req, res) {
+    update = async (req, res) => {
         try {
             const { id } = req.params;
             const payload = req.body;
-            await Category.update(payload, { where: { id } });
+            await this._categoryService.update(id, payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async delete(req, res) {
+    delete = async (req, res) => {
         try {
             const { id } = req.params;
-            await Category.destroy({ where: { id } });
+            await this._categoryService.delete(id);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-};
+}
+
+module.exports = new CategoryController();

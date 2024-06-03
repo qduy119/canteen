@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const htmlToText = require("html-to-text");
 
-module.exports = class NodeMailer {
+class NodeMailerService {
     #transporter;
     constructor(to) {
         // for testing
@@ -45,4 +45,6 @@ module.exports = class NodeMailer {
 
         await this.#transporter.sendMail(mailOptions);
     }
-};
+}
+
+module.exports = NodeMailerService;
