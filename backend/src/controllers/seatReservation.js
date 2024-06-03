@@ -1,30 +1,36 @@
-const { SeatReservation } = require("../models");
+const SeatReservationService = require("../services/SeatReservation");
 
-module.exports = class ItemController {
-    static async getAll(req, res) {
+class SeatReservationController {
+    constructor() {
+        this._seatReservationService = new SeatReservationService();
+    }
+
+    getAll = async (req, res) => {
         try {
-            const data = await SeatReservation.findAll();
+            const data = await this._seatReservationService.getAll();
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async create(req, res) {
+    create = async (req, res) => {
         try {
             const payload = req.body;
-            await SeatReservation.create(payload);
+            await this._seatReservationService.create(payload);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-    static async delete(req, res) {
+    delete = async (req, res) => {
         try {
             const { seatNumber } = req.query;
-            await SeatReservation.destroy({ where: { seatNumber } });
+            await this._seatReservationService.delete(seatNumber);
             res.status(200).json({});
         } catch (error) {
             res.status(500).json({ error });
         }
     }
-};
+}
+
+module.exports = new SeatReservationController();

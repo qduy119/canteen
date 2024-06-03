@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const UserController = require("../controllers/user");
-const { protect, restrictTo } = require("../middleware/auth");
+const { protect, restrictTo } = require("../middlewares/auth");
 const router = express.Router();
 
 router.route("/authenticate").post(UserController.authenticate);
