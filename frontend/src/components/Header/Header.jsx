@@ -5,10 +5,9 @@ import { useSelector } from "react-redux";
 import Badge from "@mui/material/Badge";
 import Search from "../Search/Search";
 
-export default function Header() {
+export default function Header({ user }) {
     const navigate = useNavigate();
     const cartItems = useSelector((state) => state.cart.items);
-    const user = useSelector((state) => state.auth.user);
     const [searchString, setSearchString] = useState("");
 
     function handleSubmit(e) {

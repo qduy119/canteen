@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Toast from "../../components/Toast/Toast";
 import { bg } from "../../assets";
+import { useLazyGetMeQuery } from "../../services/privateAuth";
 
 export default function LoginPage() {
     const location = useLocation();
@@ -17,6 +18,7 @@ export default function LoginPage() {
     const [passwordError, setPasswordError] = useState(null);
     const [login, { data, isLoading, isSuccess, isError, error }] =
         useLoginMutation();
+    const [getUser, { data: user }] = useLazyGetMeQuery();
 
     function handleChange(e) {
         setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -69,7 +71,12 @@ export default function LoginPage() {
             toast.success("Log in successfully !", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            const { user } = data;
+            getUser();
+        }
+    }, [isSuccess, data, dispatch, getUser]);
+
+    useEffect(() => {
+        if (user) {
             setTimeout(() => {
                 if (user.role === "Customer") {
                     dispatch(getItemsInCart({ userId: user.id }));
@@ -79,7 +86,7 @@ export default function LoginPage() {
                 }
             }, 2000);
         }
-    }, [isSuccess, data, navigate, dispatch, location?.state]);
+    }, [user, dispatch, navigate, location?.state]);
 
     return (
         <div

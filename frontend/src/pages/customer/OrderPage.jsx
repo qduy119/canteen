@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import PersonIcon from "@mui/icons-material/Person";
 import OrderItem from "../../components/Order/OrderItem";
@@ -18,6 +17,7 @@ import {
     useLazyGetPaymentQuery,
 } from "../../services/payment";
 import OrderPagination from "../../components/Pagination/DefaultPagination";
+import { useGetMeQuery } from "../../services/privateAuth";
 
 export default function OrderPage() {
     const location = useLocation();
@@ -25,7 +25,7 @@ export default function OrderPage() {
     const page = parseInt(query.get("page") || "1", 10);
     const [getAllOrders, { data: orders }] = useLazyGetAllOrderByUserIdQuery();
     const { data: seats } = useGetAllSeatReservationQuery();
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const [getPayment, { data: payments }] = useLazyGetPaymentQuery();
     const [cancelOrder, { isSuccess: cancelOrderSuccess }] =
         useCancelOrderMutation();

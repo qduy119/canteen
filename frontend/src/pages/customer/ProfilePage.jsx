@@ -6,22 +6,14 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import {
-    useLazyGetUserByIdQuery,
+    useGetMeQuery,
     useModifyUserMutation,
 } from "../../services/privateAuth";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../features/auth/authSlice";
 
 export default function ProfilePage() {
-    const user = useSelector((state) => state.auth.user);
-    const dispatch = useDispatch();
-    const [getUser, { data: userData, isSuccess: getUserSuccess }] =
-        useLazyGetUserByIdQuery();
-    const [credentials, setCredentials] = useState(() => {
-        const { id, avatar, fullName, phoneNumber, gender, dateOfBirth } = user;
-        return { id, avatar, fullName, phoneNumber, gender, dateOfBirth };
-    });
+    const { data: user, isSuccess: isGetMeSuccess } = useGetMeQuery();
+    const [credentials, setCredentials] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [updateUserMutation, { isSuccess: updateUserSuccess, isLoading }] =
         useModifyUserMutation();
@@ -61,14 +53,22 @@ export default function ProfilePage() {
             toast.success("Update successfully", {
                 position: toast.POSITION.BOTTOM_RIGHT,
             });
-            getUser({ id: user.id });
         }
-    }, [updateUserSuccess, getUser, user.id]);
+    }, [updateUserSuccess]);
     useEffect(() => {
-        if (getUserSuccess) {
-            dispatch(updateUser({ user: userData }));
+        if (isGetMeSuccess && user) {
+            const { id, avatar, fullName, phoneNumber, gender, dateOfBirth } =
+                user;
+            setCredentials({
+                id,
+                avatar,
+                fullName,
+                phoneNumber,
+                gender,
+                dateOfBirth,
+            });
         }
-    }, [getUserSuccess, dispatch, userData]);
+    }, [isGetMeSuccess, user]);
 
     return (
         <div className="w-full">
@@ -110,7 +110,7 @@ export default function ProfilePage() {
                                         id="fullname"
                                         className="rounded-[4px] py-2 px-3 border-none outline-none"
                                         name="fullName"
-                                        value={credentials?.fullName}
+                                        value={credentials?.fullName || ""}
                                         onChange={(e) => handleChange(e)}
                                     />
                                 </div>
@@ -121,7 +121,7 @@ export default function ProfilePage() {
                                         id="number"
                                         className="rounded-[4px] py-2 px-3 border-none outline-none"
                                         name="phoneNumber"
-                                        value={credentials?.phoneNumber}
+                                        value={credentials?.phoneNumber || ""}
                                         onChange={(e) => handleChange(e)}
                                     />
                                 </div>

@@ -8,6 +8,12 @@ const privateAuthApi = createApi({
         baseUrl,
     }),
     endpoints: (builder) => ({
+        getMe: builder.query({
+            query: () => ({
+                url: "/api/me",
+            }),
+            providesTags: (result, error, id) => [{ type: 'User', id }]
+        }),
         getUserById: builder.query({
             query: ({ id }) => ({
                 url: `/api/user/${id}`,
@@ -68,6 +74,8 @@ export const {
     useLazyGetAllUserQuery,
     useGetUserByIdQuery,
     useLazyGetUserByIdQuery,
+    useGetMeQuery,
+    useLazyGetMeQuery,
     useGetAllUserQuery,
     useAddUserMutation,
     useModifyUserMutation,

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import {
     DialogTitle,
     DialogActions,
@@ -11,6 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import Rating from "../Review/Rating";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
+import { useGetMeQuery } from "../../services/privateAuth";
 
 const quality = ["Terrible", "Poor", "Fair", "Good", "Amazing"];
 
@@ -23,7 +23,7 @@ export default function ReviewDialog({
     const [rating, setRating] = useState(5);
     const [description, setDescription] = useState("");
     const [imagesFile, setImagesFile] = useState(null);
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const [isLoading, setIsLoading] = useState(false);
 
     function handleRating(star) {

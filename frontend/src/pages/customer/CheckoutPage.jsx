@@ -23,12 +23,13 @@ import CustomCheckoutDialog from "../../components/Dialog/CustomCheckoutDialog";
 import CouponSelectionDialog from "../../components/Dialog/CouponSelectionDialog";
 import { toast } from "react-toastify";
 import CheckoutItem from "../../components/Checkout/CheckoutItem";
+import { useGetMeQuery } from "../../services/privateAuth";
 
 export default function CheckoutPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const cartItems = useSelector((state) => state.cart.items);
     const items = location.state?.items;
     const [getAllSeat, { data: seats }] = useLazyGetAllSeatReservationQuery();

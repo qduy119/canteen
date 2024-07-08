@@ -5,6 +5,15 @@ class UserController {
         this._userService = new UserService();
     }
 
+    getMe = async (req, res) => {
+        try {
+            const { id } = req.user;
+            const data = await this._userService.getById(id);
+            res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json({ error });
+        }
+    }
     getById = async (req, res) => {
         try {
             const { id } = req.params;

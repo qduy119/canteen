@@ -88,6 +88,7 @@ router
     .get(restrictTo("Customer"), OrderItemController.isRated);
 
 // user
+router.route("/me").get(restrictTo("Customer", "Admin"), UserController.getMe);
 router
     .route("/user")
     .get(restrictTo("Customer", "Admin"), UserController.getAll);

@@ -14,13 +14,15 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAddCartItemsMutation } from "../../services/cart";
 import getItemsInCart from "../../features/cart/getItemsInCart";
 import Review from "../../components/Review/Review";
+import { useLazyGetMeQuery } from "../../services/privateAuth";
 
 export default function ProductPage() {
     const location = useLocation();
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const [getUser, { data: user }] = useLazyGetMeQuery();
     const { data: food, review } = useLoaderData();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
     const [addToCart, { isSuccess: addToCartSuccess }] =
         useAddCartItemsMutation();
     const [addToCartNow, { data, isSuccess: addToCartNowSuccess }] =
@@ -75,6 +77,11 @@ export default function ProductPage() {
         }
     }
 
+    useEffect(() => {
+        if (accessToken) {
+            getUser();
+        }
+    }, [accessToken, getUser]);
     useEffect(() => {
         if (addToCartSuccess) {
             dispatch(getItemsInCart({ userId: user.id }));

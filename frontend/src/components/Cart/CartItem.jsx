@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -9,13 +9,13 @@ import getItemsInCart from "../../features/cart/getItemsInCart";
 import { formatPrice } from "../../utils";
 
 export default function CartItem({
+    user,
     isChecked,
     cart,
     onSetSelect,
     onDeleteCartItem,
 }) {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
     const [updateCartItem, { isSuccess: updateCartItemSuccess }] =
         useModifyCartItemsMutation();
 

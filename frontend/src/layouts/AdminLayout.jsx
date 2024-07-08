@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useGetMeQuery } from "../services/privateAuth";
 import { IconButton } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
@@ -10,7 +10,7 @@ import AuthErrorPage from "../pages/customer/AuthErrorPage";
 import Toast from "../components/Toast/Toast";
 
 export default function AdminLayout() {
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const [open, setOpen] = useState(false);
 
     return user?.role === "Admin" ? (

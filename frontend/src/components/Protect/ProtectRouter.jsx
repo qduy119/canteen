@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import AuthErrorPage from "../../pages/customer/AuthErrorPage";
+import { useSelector } from "react-redux";
 
 export default function ProtectRouter() {
-    const user = useSelector((state) => state.auth.user);
+    const accessToken = useSelector((state) => state.auth.accessToken);
 
-    return user ? <Outlet /> : <AuthErrorPage />;
+    return accessToken ? <Outlet /> : <AuthErrorPage />;
 }

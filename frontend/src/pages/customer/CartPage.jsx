@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,11 +8,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import PersonIcon from "@mui/icons-material/Person";
 import CartItem from "../../components/Cart/CartItem";
 import { formatPrice } from "../../utils";
+import { useGetMeQuery } from "../../services/privateAuth";
 
 export default function CartPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const cartItems = useSelector((state) => state.cart.items);
     const [deleteCartItem, { isSuccess: deleteCartItemSuccess }] =
         useDeleteCartItemsMutation();
@@ -22,25 +23,29 @@ export default function CartPage() {
             return result;
         }, {});
     });
-    const getData = {
-        count: () =>
-            Object.values(select)?.reduce((count, item) => {
-                if (item) {
-                    count++;
-                }
-                return count;
-            }, 0),
-        total: () =>
-            cartItems?.reduce((total, item) => {
-                if (select[item.id]) {
-                    total +=
-                        item.quantity *
-                        item.item.price *
-                        (1 - item.item.discount * 0.01);
-                }
-                return total;
-            }, 0),
-    };
+    const countCartItem = useMemo(() => {
+        return select
+            ? Object.values(select).reduce((count, item) => {
+                  if (item) {
+                      count++;
+                  }
+                  return count;
+              }, 0)
+            : 0;
+    }, [select]);
+    const totalCartItemPrice = useMemo(() => {
+        return cartItems
+            ? cartItems.reduce((total, item) => {
+                  if (select[item.id]) {
+                      total +=
+                          item.quantity *
+                          item.item.price *
+                          (1 - item.item.discount * 0.01);
+                  }
+                  return total;
+              }, 0)
+            : 0;
+    }, [cartItems, select]);
 
     function handleSelect(e) {
         setSelect((prev) => {
@@ -116,8 +121,9 @@ export default function CartPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {cartItems.map((item, index) => (
+                            {cartItems?.map((item, index) => (
                                 <CartItem
+                                    user={user}
                                     isChecked={select[item.id]}
                                     key={index}
                                     cart={item}
@@ -133,13 +139,13 @@ export default function CartPage() {
                         <p>
                             Select:{" "}
                             <span className="font-semibold">
-                                {getData.count()}
+                                {countCartItem}
                             </span>
                         </p>
                         <p>
                             Total:{" "}
                             <span className="font-semibold">
-                                {formatPrice(getData.total())}
+                                {formatPrice(totalCartItemPrice)}
                             </span>{" "}
                             $
                         </p>

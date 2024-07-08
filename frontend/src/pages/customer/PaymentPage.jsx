@@ -3,10 +3,10 @@ import { useLocation } from "react-router-dom";
 import moment from "moment";
 import { useModifyOrderMutation } from "../../services/order";
 import { useAddPaymentMutation } from "../../services/payment";
-import { useSelector } from "react-redux";
+import { useGetMeQuery } from "../../services/privateAuth";
 
 export default function PaymentPage() {
-    const user = useSelector((state) => state.auth.user);
+    const { data: user } = useGetMeQuery();
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const [amount, bankCode, cardType, payDate, orderId, status] = [

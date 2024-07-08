@@ -7,13 +7,16 @@ import { IconButton, Tooltip } from "@mui/material";
 import { useAddCartItemsMutation } from "../../services/cart";
 import getItemsInCart from "../../features/cart/getItemsInCart";
 import { formatPrice } from "../../utils";
+import { useLazyGetMeQuery } from "../../services/privateAuth";
 
 export default function FoodItem({ food }) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
-    const [addToCart, { data, isSuccess }] = useAddCartItemsMutation();
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const [getUser, { data: user }] = useLazyGetMeQuery();
 
+    const [addToCart, { data, isSuccess }] = useAddCartItemsMutation();
+    
     function handleBuyNow() {
         if (!user) {
             navigate("/login");
@@ -21,7 +24,12 @@ export default function FoodItem({ food }) {
             addToCart({ quantity: 1, itemId: food.id, userId: user.id });
         }
     }
-
+    
+    useEffect(() => {
+        if (accessToken) {
+            getUser();
+        }
+    }, [accessToken, getUser]);
     useEffect(() => {
         if (isSuccess) {
             dispatch(getItemsInCart({ userId: user.id }));

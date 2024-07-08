@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
-import { useSelector } from "react-redux";
 import Header from "../Header/Header";
 import UserMask from "../User/UserMask";
+import { useLazyGetMeQuery } from "../../services/privateAuth";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function Navbar() {
-    const user = useSelector((state) => state.auth.user);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const [getUser, { data: user }] = useLazyGetMeQuery();
+
+    useEffect(() => {
+        if (accessToken) {
+            getUser();
+        }
+    }, [accessToken, getUser]);
 
     return (
         <div className="border-b-[1px] p-3 md:p-4 w-full z-50 fixed top-0 left-0 h-[130px] md:h-[90px] flex items-center bg-white">
@@ -15,9 +24,9 @@ export default function Navbar() {
                         hcmus@canteen
                     </Link>
                 </div>
-                <Header />
-                {user ? (
-                    <UserMask imageUrl={user.avatar} role={user.role} />
+                <Header user={user} />
+                {accessToken ? (
+                    <UserMask imageUrl={user?.avatar} role={user?.role} />
                 ) : (
                     <div className="flex items-center justify-end flex-wrap">
                         <Button>
@@ -43,8 +52,8 @@ export default function Navbar() {
                             hcmus@canteen
                         </Link>
                     </div>
-                    {user ? (
-                        <UserMask imageUrl={user.avatar} role={user.role} />
+                    {accessToken ? (
+                        <UserMask imageUrl={user?.avatar} role={user?.role} />
                     ) : (
                         <div className="flex items-center justify-end flex-wrap">
                             <Button sx={{ p: 0 }}>
@@ -61,7 +70,7 @@ export default function Navbar() {
                     )}
                 </div>
                 <div className="w-full flex justify-center pl-0 sm:pl-5">
-                    <Header />
+                    <Header user={user} />
                 </div>
             </div>
         </div>

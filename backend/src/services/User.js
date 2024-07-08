@@ -32,7 +32,7 @@ class UserService {
         sendRefreshToken(user, res);
         req.user = user;
         const accessToken = genAccessToken(user);
-        res.status(200).json({ user, accessToken });
+        res.status(200).json({ accessToken });
     }
     async register(req, res) {
         const id = uuid();

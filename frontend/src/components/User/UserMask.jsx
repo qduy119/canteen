@@ -20,6 +20,7 @@ export default function UserMask({ imageUrl, role }) {
     const [logout, { isSuccess }] = useLogoutMutation();
     const navigate = useNavigate();
     const [anchor, setAnchor] = useState("");
+    
     function handleOpen(e) {
         e.preventDefault();
         setAnchor(e.currentTarget);
