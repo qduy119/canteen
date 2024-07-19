@@ -5,7 +5,8 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const https = require("https");
 const fs = require("fs");
-const connect = require("./src/connection");
+const connectDB = require("./src/connection");
+const redis = require("./src/utils/redis");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,10 +41,6 @@ app.use((error, req, res, next) => {
     res.status(error.statusCode).json(error.message);
 });
 
-(async () => {
-    await connect();
-})();
-
 const options = {
     key: fs.readFileSync("server.key"),
     cert: fs.readFileSync("server.cert"),
@@ -51,6 +48,8 @@ const options = {
 
 const server = https.createServer(options, app);
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
+    await connectDB();
+    await redis.connect();
     console.log(`Server listening on ${PORT}`);
 });

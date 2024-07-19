@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 const { User } = require("../models");
 const { sendRefreshToken, genAccessToken } = require("../utils/token");
+const { validateToken, removeToken } = require("../utils/redisHelper");
 
 class UserService {
     async getAll() {
@@ -29,8 +30,7 @@ class UserService {
             return res.status(409).json("Email or password is incorrect");
         }
         delete user.password;
-        sendRefreshToken(user, res);
-        req.user = user;
+        await sendRefreshToken(user, res);
         const accessToken = genAccessToken(user);
         res.status(200).json({ accessToken });
     }
@@ -46,34 +46,54 @@ class UserService {
         await User.create({ ...payload, id });
         res.status(200).json({});
     }
-    logout(res) {
-        const options = {
-            sameSite: "none",
-            secure: true,
-            httpOnly: true,
-        };
-        res.clearCookie("refreshToken", options);
-        res.status(200).json({});
-    }
-    refresh(req, res) {
+    logout(req, res) {
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
-            return next(new Error("You are not logged in"));
+            throw new Error("You are not logged in");
         }
         jwt.verify(
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET,
-            (error, user) => {
+            async (error, user) => {
                 if (error) {
-                    return next(error);
+                    throw new Error(error);
+                }
+                const isDel = await removeToken(user.id, refreshToken);
+                if (!isDel) {
+                    throw new Error("Refresh token is not found");
+                }
+                const options = {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                };
+                res.clearCookie("refreshToken", options);
+                res.status(200).json({});
+            }
+        );
+    }
+    refresh(req, res) {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            throw new Error("You are not logged in");
+        }
+        jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET,
+            async (error, user) => {
+                if (error) {
+                    throw new Error(error);
+                }
+                const isFound = await validateToken(user.id, refreshToken);
+                if (!isFound) {
+                    throw new Error("Refresh token is not found");
                 }
                 const newAccessToken = genAccessToken(user);
-                sendRefreshToken(user, res);
                 res.status(200).json({ token: newAccessToken });
             }
         );
     }
-    handleThirdPartyAuthentication(error, user, info, req, res, next) {
+    async handleThirdPartyAuthentication(error, user, info, req, res, next) {
         if (error) {
             return next(error);
         }
@@ -83,8 +103,7 @@ class UserService {
         }
         delete user.get().password;
         const token = genAccessToken(user);
-        sendRefreshToken(user, res);
-        req.user = user;
+        await sendRefreshToken(user, res);
 
         res.redirect(
             `${process.env.CLIENT_DOMAIN}/oauth-success?token=${token}&id=${user.id}`

@@ -68,7 +68,7 @@ class UserController {
     };
     logout = (req, res) => {
         try {
-            return this._userService.logout(res);
+            return this._userService.logout(req, res);
         } catch (error) {
             res.status(500).json({ error });
         }
@@ -81,8 +81,8 @@ class UserController {
         }
     };
     handleThirdPartyAuthentication = (req, res, next) => {
-        return (error, user, info) => {
-            this._userService.handleThirdPartyAuthentication(
+        return async (error, user, info) => {
+            await this._userService.handleThirdPartyAuthentication(
                 error,
                 user,
                 info,

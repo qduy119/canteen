@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { setToken } = require("./redisHelper");
 
 const genAccessToken = (user) =>
     jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, {
@@ -10,8 +11,9 @@ const genRefreshToken = (user) =>
         expiresIn: process.env.REFRESH_TOKEN_EXPIRATION,
     });
 
-function sendRefreshToken(user, res) {
+async function sendRefreshToken(user, res) {
     const refreshToken = genRefreshToken(user);
+    await setToken(user.id, refreshToken);
     const options = {
         sameSite: "none",
         secure: true,
