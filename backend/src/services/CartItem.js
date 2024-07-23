@@ -1,4 +1,4 @@
-const { CartItem, Item } = require("../models");
+const { CartItem, Item, sequelize } = require("../models");
 
 class CartItemService {
     async getAll(userId) {
@@ -11,19 +11,39 @@ class CartItemService {
         return data;
     }
     async create(payload) {
-        const { userId, itemId, quantity } = payload;
-        const isExist = await CartItem.findOne({
-            where: { userId, itemId },
-        });
-        let data;
-        if (isExist) {
-            isExist.quantity += quantity;
-            data = await isExist.save();
-        } else {
-            data = await CartItem.create(payload);
+        const t = await sequelize.transaction();
+
+        try {
+            const { userId, itemId, quantity } = payload;
+            const item = await Item.findOne({
+                where: { id: itemId },
+                lock: true,
+                transaction: t,
+            });
+            if (item.stock - quantity < 0) {
+                throw new Error("Quantity invalid");
+            }
+            await Item.increment(
+                { stock: -quantity },
+                { where: { id: itemId }, transaction: t }
+            );
+            const isExist = await CartItem.findOne({
+                where: { userId, itemId },
+                transaction: t,
+            });
+            let data;
+            if (isExist) {
+                isExist.quantity += quantity;
+                data = await isExist.save({ transaction: t });
+            } else {
+                data = await CartItem.create(payload, { transaction: t });
+            }
+            await t.commit();
+            return data;
+        } catch (error) {
+            await t.rollback();
+            throw error;
         }
-        await Item.increment({ stock: -quantity }, { where: { id: itemId } });
-        return data;
     }
     async update(id, payload) {
         const cartItem = await CartItem.findByPk(id);

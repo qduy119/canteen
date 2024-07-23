@@ -4,6 +4,7 @@ import axios from "axios";
 import { baseUrl } from "../../utils";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loginSuccess } from "../../features/auth/authSlice";
+import getItemsInCart from "../../features/cart/getItemsInCart";
 
 export default function OAuthSuccessPage() {
     const dispatch = useDispatch();
@@ -19,15 +20,16 @@ export default function OAuthSuccessPage() {
             const res = await axios.get(`${baseUrl}/api/user/${id}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
-            if(res.status === 200) {
+            if (res.status === 200) {
                 setUser(res.data);
             }
         }
         fetchUser();
     }, [id, accessToken]);
     useEffect(() => {
-        if(user) {
+        if (user) {
             dispatch(loginSuccess({ user, accessToken }));
+            dispatch(getItemsInCart({ userId: user.id }));
             setTimeout(() => {
                 navigate("/");
             }, 1000);
